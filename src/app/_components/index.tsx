@@ -2,29 +2,39 @@ import Image from "next/image";
 import Link from "next/link";
 
 type Props = {
-    user: {
-      username: string;
-      email: string;
-    } | null;
-  };
+  user: {
+    username: string;
+    email: string;
+  } | null;
+};
 
 export default function Home(props: Props) {
-    const {user} = props
+  const { user } = props;
+
   return (
     <div className="grid grid-rows-[auto_20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-4 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      
+
       
       <nav className="w-full flex justify-end gap-6 text-sm text-gray-600 dark:text-gray-300">
-        <Link href="/login" className="hover:underline">
-          Login
-        </Link>
-        <Link href="/register" className="hover:underline">
-          Register
-        </Link>
-        <Link href="/profile" className="hover:underline">
-          Profile
-        </Link>
-        
+        {user ? (
+          <>
+            <Link href="/profile" className="hover:underline">
+              Profile
+            </Link>
+            <Link href="/" className="hover:underline">
+              Home
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link href="/login" className="hover:underline">
+              Login
+            </Link>
+            <Link href="/register" className="hover:underline">
+              Register
+            </Link>
+          </>
+        )}
       </nav>
 
       <main className="flex flex-col gap-[32px] row-start-3 items-center sm:items-start">
