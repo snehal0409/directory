@@ -1,16 +1,19 @@
-import { getSessionAdmin } from './../../../../lib/session';
-import { redirect } from 'next/navigation';
-import AddSubcategoryForm from './components/AddSubcategoryForm';
-import React from 'react';
+import React from "react";
+import SubcategoryForm from "../components/SubcategoryForm"; // Adjust path if needed
+import { getAllCategories } from "../actions";
+import connectDB from '../../../../lib/mongodb';
+
 
 export default async function AddSubcategoryPage() {
-  const admin = await getSessionAdmin();
-  if (!admin) redirect('/.admin/login');
+    await connectDB();
+  // Fetch categories server-side
+  const categories = await getAllCategories();
 
   return (
-    <div>
-      <h1 className="text-xl font-bold mb-4">Add Subcategory</h1>
-      <AddSubcategoryForm />
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Add Subcategory</h1>
+      {/* Pass the plain categories to SubcategoryForm */}
+      <SubcategoryForm categories={categories} />
     </div>
   );
 }

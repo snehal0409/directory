@@ -1,28 +1,27 @@
-'use client';
-import Link from 'next/link';
-import SubcategoryRow from './SubcategoryRow';
-import { SubcategoryType } from './../../../../types';
 import React from 'react';
+import { getAllSubcategories } from '../actions';
 
-export default function SubcategoryTable({ subcategories }: { subcategories: SubcategoryType[] }) {
+export default async function SubcategoryTable() {
+  const subcategories = await getAllSubcategories();
+
   return (
-    <div>
-      <Link href="/.admin/subcategories/add" className="btn-primary mb-4 inline-block">Add Subcategory</Link>
-      <table className="w-full border">
-        <thead>
-          <tr>
-            <th>Key</th>
-            <th>Name</th>
-            <th>Parent</th>
-            <th>Actions</th>
+    <table className="w-full border mt-6">
+      <thead>
+        <tr className="bg-gray-200">
+          <th className="p-2 border">Key</th>
+          <th className="p-2 border">Name</th>
+          <th className="p-2 border">Parent Category Key</th>
+        </tr>
+      </thead>
+      <tbody>
+        {subcategories.map((sub: any) => (
+          <tr key={sub._id}>
+            <td className="p-2 border">{sub.subcategoryKey}</td>
+            <td className="p-2 border">{sub.subcategoryName}</td>
+            <td className="p-2 border">{sub.subcategoryParent}</td>
           </tr>
-        </thead>
-        <tbody>
-          {subcategories.map(sub => (
-            <SubcategoryRow key={sub._id} subcategory={sub} />
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
   );
 }

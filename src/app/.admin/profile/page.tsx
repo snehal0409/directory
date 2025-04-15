@@ -1,6 +1,6 @@
 import AdminProfileForm from "./components/AdminProfileForm";
 import { getSessionAdmin } from "./../../../lib/session";
-import { getAdminById } from "../add/actions";
+import { getAdminById } from "./../edit/[id]/actions";
 import React from "react";
 import { AdminType } from "../../../types";
 

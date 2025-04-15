@@ -1,30 +1,65 @@
-// src/app/.admin/subcategories/page.tsx
-import { getSessionAdmin } from '../../../lib/session';
-import { redirect } from 'next/navigation';
-import SubcategoryTable from './components/SubcategoryTable';
-import { getAllSubcategories } from './actions/getAllSubcategories';
-import React from 'react';
-import Link from 'next/link';
+import React from "react";
+import { getAllSubcategories } from "./actions";
+import { deleteSubcategoryAction } from "./actions";
 
 export default async function SubcategoriesPage() {
-  const admin = await getSessionAdmin();
-  if (!admin) redirect('/.admin/login');
-
   const subcategories = await getAllSubcategories();
 
   return (
-    <div className="space-y-4">
-         <nav className="flex gap-4 mb-6 border-b pb-3 text-sm font-medium">
-        <Link href="/.admin/dashboard" className="text-blue-600 hover:underline">Dashboard</Link>
-        <Link href="/.admin/admins" className="text-blue-600 hover:underline">Admins</Link>
-        <Link href="/.admin/categories" className="text-blue-600 hover:underline">Categories</Link>
-        <Link href="/.admin/subcategories" className="text-blue-600 hover:underline">Subcategories</Link>
-        <Link href="/.admin/profile" className="text-blue-600 hover:underline">Profile</Link>
-        <Link href="/.admin/login?logout=true" className="text-red-600 hover:underline ml-auto">Logout</Link>
-      </nav>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Subcategories</h1>
+      <a
+        href="/.admin/subcategories/add"
+        className="mb-4 inline-block bg-green-600 text-white px-4 py-2 rounded"
+      >
+        + Add Subcategory
         
-      <h1 className="text-xl font-bold">Manage Subcategories</h1>
-      <SubcategoryTable subcategories={subcategories} />
+      </a>
+
+      <table className="w-full border border-collapse">
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="border p-2">Key</th>
+            <th className="border p-2">Name</th>
+            <th className="border p-2">Parent Category</th>
+            <th className="border p-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {subcategories.map((sub: any) => (
+            <tr key={sub._id}>
+              <td className="border p-2">{sub.subcategoryKey}</td>
+              <td className="border p-2">{sub.subcategoryName}</td>
+              <td className="border p-2">{sub.categoryName}</td>
+              <td className="border p-2">
+                <a
+                  href={`/.admin/subcategories/edit/${sub._id}`}
+                  className="text-blue-600 mr-2"
+                >
+                  Edit
+                </a>
+                <form
+                  action={deleteSubcategoryAction.bind(null, sub._id)}
+                  method="POST"
+                  className="inline"
+                >
+                  <button
+                    type="submit"
+                    className="text-red-600"
+                    onClick={(e) => {
+                      if (!confirm("Are you sure you want to delete this subcategory?")) {
+                        e.preventDefault();
+                      }
+                    }}
+                  >
+                    Delete
+                  </button>
+                </form>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

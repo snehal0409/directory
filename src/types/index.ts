@@ -12,9 +12,16 @@ export interface CategoryType {
   categoryKey: string;
   categoryName: string;
 }
-export interface SubcategoryType {
-  _id?: string;
+export interface ICategory {
+  _id: string;
+  categoryKey: string;
+  categoryName: string;
+}
+
+export interface ISubcategory {
+  _id: string;
   subcategoryKey: string;
   subcategoryName: string;
   subcategoryParent: string;
 }
+

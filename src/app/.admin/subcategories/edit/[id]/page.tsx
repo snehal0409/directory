@@ -1,21 +1,41 @@
-import { getSessionAdmin } from '../../../../../lib/session';
-import { redirect } from 'next/navigation';
-import EditSubcategoryForm from './components/EditSubcategoryForm';
-import { Subcategory } from './../../../../../models/subcategory';
-import { connectDB } from './../../../../../lib/mongodb';
-import React from 'react';
+import React from "react";
+import SubcategoryForm from "../../components/SubcategoryForm";
+import { getSubcategoryById, getAllCategories } from "../../actions";
+import { Types } from "mongoose";
 
-export default async function EditSubcategoryPage({ params }: { params: { id: string } }) {
-  const admin = await getSessionAdmin();
-  if (!admin) redirect('/.admin/login');
+interface ISubcategory {
+  _id: Types.ObjectId;
+  subcategoryKey: string;
+  subcategoryName: string;
+  subcategoryParent: Types.ObjectId;
+}
 
-  await connectDB();
-  const subcategory = await Subcategory.findById(params.id).lean();
+interface EditSubcategoryPageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default async function EditSubcategoryPage({ params }: EditSubcategoryPageProps) {
+  const subcategory: ISubcategory | null = await getSubcategoryById(params.id);
+  const categories = await getAllCategories(); // ✅ Fetch categories here
+
+  if (!subcategory) {
+    return <div className="p-4 text-red-600">Subcategory not found.</div>;
+  }
 
   return (
-    <div>
-      <h1 className="text-xl font-bold mb-4">Edit Subcategory</h1>
-      <EditSubcategoryForm subcategory={subcategory} />
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Edit Subcategory</h1>
+      <SubcategoryForm
+        initialData={{
+          _id: subcategory._id.toString(),
+          subcategoryKey: subcategory.subcategoryKey,
+          subcategoryName: subcategory.subcategoryName,
+          subcategoryParent: subcategory.subcategoryParent.toString(),
+        }}
+        categories={categories} // ✅ Pass categories to the form
+      />
     </div>
   );
 }
