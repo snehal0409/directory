@@ -1,27 +1,21 @@
-export type AdminType = {
-  _id: string;
-  
+export interface AdminType {
+  _id: string; // If you're using MongoDB, _id will be of type ObjectId but you can use string in most cases
   username: string;
-  password: string;
-  createdAt: string; // changed from Date
-  updatedAt: string; // changed from Date
-};
+  password?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 // Define and export CategoryType
+export interface SubcategoryType {
+  _id: string;
+  subcategoryKey: string;
+  subcategoryName: string;
+  subcategoryParent: string;
+  parentCategoryName?: string;
+}
+
 export interface CategoryType {
   _id: string;
   categoryKey: string;
   categoryName: string;
 }
-export interface ICategory {
-  _id: string;
-  categoryKey: string;
-  categoryName: string;
-}
-
-export interface ISubcategory {
-  _id: string;
-  subcategoryKey: string;
-  subcategoryName: string;
-  subcategoryParent: string;
-}
-

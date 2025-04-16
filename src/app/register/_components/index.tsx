@@ -4,6 +4,7 @@ import React from 'react';
 
 import { register} from '@/app/actions/auth';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export function RegisterForm() {
   const router = useRouter();
@@ -109,9 +110,10 @@ export function RegisterForm() {
 
           <p className="text-center text-sm text-gray-600 mt-4">
             Already have an account?{' '}
-            <a className="underline text-blue-600" href="/">
+            <Link className="underline text-blue-600" href="/login">
               Login
-            </a>
+            </Link>
+
           </p>
         </form>
       </div>

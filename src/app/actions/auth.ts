@@ -1,12 +1,19 @@
 'use server';
 
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import User from '@/models/user';
 import { connectDB } from '@/lib/mongodb';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 
 const SECRET = process.env.JWT_SECRET!;
+
+
+export const hashPassword = async (password: string): Promise<string> => {
+  const salt = await bcrypt.genSalt(10); // Generate a salt for hashing
+  return await bcrypt.hash(password, salt); // Hash the password
+};
+
 
 export async function register(formData: FormData) {
   await connectDB();
@@ -57,7 +64,7 @@ export async function changePassword(newPassword: string) {
   const payload = jwt.verify(token, SECRET) as { userId: string };
 
   const hashedPassword = await bcrypt.hash(newPassword, 10);
-  const updated = await User.findByIdAndUpdate(payload.userId, {
+  await User.findByIdAndUpdate(payload.userId, {
     password: hashedPassword,
   });
 

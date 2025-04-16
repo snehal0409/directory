@@ -15,6 +15,7 @@ export async function getSessionAdmin() {
     const admin = await Admin.findById(decoded.id).lean();
     return admin;
   } catch (err) {
+    console.log(err)
     return null;
   }
 }
