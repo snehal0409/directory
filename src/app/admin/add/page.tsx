@@ -11,7 +11,7 @@ const AddAdmin = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await addAdminAction(adminData);
-    router.push("/admin/dashboard");
+    router.push("/admin/admins");
   };
 
   return (

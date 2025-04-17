@@ -19,3 +19,21 @@ export interface CategoryType {
   categoryKey: string;
   categoryName: string;
 }
+
+
+
+
+// src/types/index.ts
+// src/types/index.ts
+export type UserType = {
+  _id: string;
+  username: string;
+  email: string;
+  createdAt: string; // Or Date, depending on your setup
+};
+
+export interface ActionResult {
+  success?: boolean;
+  error?: string;
+}
+

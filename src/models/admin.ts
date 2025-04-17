@@ -1,20 +1,23 @@
-// src/models/admin.ts
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Schema, models, model } from 'mongoose';
 
-export interface Admin extends Document {
-  _id: string;
-  username: string;
-  password: string;  // Optional or required, depending on your setup
-  createdAt: Date;
-  updatedAt: Date;
+const adminSchema = new Schema({
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+},
+
+{
+  timestamps: true, // ✅ Automatically adds createdAt and updatedAt
 }
+);
 
-const AdminSchema = new Schema({
-  username: { type: String, required: true },
-  password: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-});
+const Admin = models.Admin || model('Admin', adminSchema);
 
-const AdminModel = mongoose.models.Admin ||  mongoose.model<Admin>('Admin', AdminSchema);
-export default AdminModel;
+export default Admin;

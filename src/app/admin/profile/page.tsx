@@ -1,19 +1,19 @@
-import AdminProfileForm from "./components/AdminProfileForm";
-import { getSessionAdmin } from "./../../../lib/session";
-import { getAdminById } from "./../edit/[id]/actions";
-import React from "react";
-import { AdminType } from "../../../types";
+// app/admin/profile/page.tsx
+import { getSessionAdmin } from '../../../lib/session';
+import { redirect } from 'next/navigation';
 
 export default async function AdminProfilePage() {
   const session = await getSessionAdmin();
-  if (!session) return null;
 
-  const admin = await getAdminById(session.id) as unknown as AdminType;
-  if (!admin) return <div className="p-4 text-red-600">Admin not found</div>;
+  // If not logged in, redirect to login page
+  if (!session) {
+    redirect('/admin/login');
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <AdminProfileForm admin={admin} />
+    <div>
+      <h1>Admin Profile</h1>
+      {/* Admin profile content */}
     </div>
   );
 }
