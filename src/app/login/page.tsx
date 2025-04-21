@@ -5,7 +5,7 @@ import {LoginForm} from "./_components";
 
 export default async function LoginPage() {
   const user = await session();
-  if (user) redirect("/"); // Already logged in? Go home
+  if (user) redirect("/user/dashboard"); // Already logged in? Go home
 
   return <LoginForm />;
 }

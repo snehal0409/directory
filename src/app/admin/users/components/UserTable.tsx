@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+
 import { UserType } from "@/types";
 import UserRow from "./UserRow";
-import { getAllUsers } from "./../actions/getAllUsers";
+
 
 interface UserTableProps {
   users: UserType[]; // Define the type for the 'users' prop
