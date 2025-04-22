@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface AdminType {
   email: any;
   _id: string; // If you're using MongoDB, _id will be of type ObjectId but you can use string in most cases
@@ -8,6 +10,7 @@ export interface AdminType {
 }
 // Define and export CategoryType
 export interface SubcategoryType {
+  subcategoryDescription: ReactNode;
   _id: string;
   subcategoryKey: string;
   subcategoryName: string;
@@ -25,7 +28,6 @@ export interface CategoryType {
 
 
 // src/types/index.ts
-// src/types/index.ts
 export type UserType = {
   _id: string;
   username: string;
@@ -39,13 +41,15 @@ export interface ActionResult {
 }
 
 export interface ItemType {
+  
   _id: string;
-  userId: string;
-  subCategoryKey: string;
   itemTitle: string;
   itemDescription: string;
-  timeStamp: string;
-  active: boolean;
+  subcategoryKey: string;
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  
 }
 
 

@@ -93,8 +93,9 @@ await connectDB();
 
 export async function getAllItems() {
   await connectDB();
-  const items = await Item.find({});
-  return JSON.parse(JSON.stringify(items));
+  const items = await Item.find({}).sort({createdAt: -1});
+
+  return items;
 }
 
 
@@ -125,4 +126,20 @@ export async function updateItem(
       },
     }
   );
+}
+export async function getItemsByCategoryKey(categoryKey: string) {
+  await connectDB();
+
+  return Item.aggregate([
+    {
+      $match: {
+        categoryKey: categoryKey,
+      },
+    },
+    {
+      $sort: {
+        createdAt: -1,
+      },
+    },
+  ]);
 }

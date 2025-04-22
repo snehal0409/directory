@@ -1,5 +1,8 @@
-import Image from "next/image";
+// src/app/page.tsx
 import Link from "next/link";
+import { getAllItems } from "../user/listings/actions";
+import { getAllCategories } from "@/app/admin/categories/actions/getAllCategories";
+import type { ItemType, CategoryType } from "@/types";
 
 type Props = {
   user: {
@@ -8,131 +11,71 @@ type Props = {
   } | null;
 };
 
-export default function Home(props: Props) {
-  const { user } = props;
+export default async function Home({ user }: Props) {
+  const listings: ItemType[] = await getAllItems();
+  const categories: CategoryType[] = await getAllCategories();
 
   return (
-    <div className="grid grid-rows-[auto_20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-4 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-[220px_1fr] gap-8 p-6 sm:p-12 bg-gradient-to-r from-blue-50 to-indigo-100 dark:from-zinc-900 dark:to-black">
       
-      <nav className="w-full flex justify-end gap-6 text-sm text-gray-600 dark:text-gray-300">
-        {user ? (
-          <>
-            <Link href="/profile" className="hover:underline">
-              Profile
-            </Link>
-            <Link href="/" className="hover:underline">
-              Home
-            </Link>
-          </>
-        ) : (
-          <>
-            <Link href="/login" className="hover:underline">
-              Login
-            </Link>
-            <Link href="/register" className="hover:underline">
-              Register
-            </Link>
-          </>
-        )}
-      </nav>
-
-      <main className="flex flex-col gap-[32px] row-start-3 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* Sidebar - Categories & Auth */}
+      <aside className="flex flex-col gap-6 p-4 bg-white dark:bg-zinc-800 rounded-lg shadow-md">
+        
+        {/* Auth Links */}
+        <div className="flex flex-col gap-2 text-gray-700 dark:text-gray-300">
+          {user ? (
+            <>
+              <Link href="/profile" className="text-lg text-blue-600 dark:text-blue-400 hover:underline">
+                Profile
+              </Link>
+              <Link href="/" className="text-lg text-blue-600 dark:text-blue-400 hover:underline">
+                Home
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="text-lg text-gray-600 dark:text-gray-400 hover:underline">
+                Login
+              </Link>
+              <Link href="/register" className="text-lg text-gray-600 dark:text-gray-400 hover:underline">
+                Register
+              </Link>
+            </>
+          )}
         </div>
-      </main>
 
-      <footer className="row-start-4 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        {/* Category Links */}
+        <div className="pt-4 border-t border-gray-200 dark:border-zinc-700">
+          <div className="flex flex-col gap-3">
+            {categories.map((cat) => (
+              <Link
+                key={cat._id}
+                href={`/category/${cat.categoryKey}`} // ⬅️ updated route
+                className="text-lg text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-500 transition-colors duration-300"
+              >
+                {cat.categoryName}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content - Listings */}
+      <main className="flex flex-col gap-6">
+        {listings.map((listing) => (
+          <div
+            key={listing._id}
+            className="p-6 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:scale-105"
+          >
+            <h2 className="font-bold text-2xl text-gray-800 dark:text-white mb-3">
+              {listing.itemTitle}
+            </h2>
+            <p className="text-lg text-gray-700 dark:text-gray-300 whitespace-pre-line">
+              {listing.itemDescription}
+            </p>
+          </div>
+        ))}
+      </main>
     </div>
   );
 }
