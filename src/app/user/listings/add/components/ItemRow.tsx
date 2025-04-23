@@ -4,6 +4,7 @@ import { ItemType } from "@/types";
 import Link from "next/link";
 import { deleteItem } from "../../actions";
 
+
 export default function ItemRow({ item }: { item: ItemType }) {
   return (
     <div className="border p-4 rounded flex justify-between items-center">
