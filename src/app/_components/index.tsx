@@ -1,4 +1,3 @@
-// src/app/page.tsx
 import Link from "next/link";
 import { getAllItems } from "../user/listings/actions";
 import { getAllCategories } from "@/app/admin/categories/actions/getAllCategories";
@@ -16,66 +15,91 @@ export default async function Home({ user }: Props) {
   const categories: CategoryType[] = await getAllCategories();
 
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-[220px_1fr] gap-8 p-6 sm:p-12 bg-gradient-to-r from-blue-50 to-indigo-100 dark:from-zinc-900 dark:to-black">
-      
-      {/* Sidebar - Categories & Auth */}
-      <aside className="flex flex-col gap-6 p-4 bg-white dark:bg-zinc-800 rounded-lg shadow-md">
-        
-        {/* Auth Links */}
-        <div className="flex flex-col gap-2 text-gray-700 dark:text-gray-300">
-          {user ? (
-            <>
-              <Link href="/profile" className="text-lg text-blue-600 dark:text-blue-400 hover:underline">
-                Profile
-              </Link>
-              <Link href="/" className="text-lg text-blue-600 dark:text-blue-400 hover:underline">
-                Home
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="text-lg text-gray-600 dark:text-gray-400 hover:underline">
-                Login
-              </Link>
-              <Link href="/register" className="text-lg text-gray-600 dark:text-gray-400 hover:underline">
-                Register
-              </Link>
-            </>
-          )}
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-zinc-900 dark:to-black">
 
-        {/* Category Links */}
-        <div className="pt-4 border-t border-gray-200 dark:border-zinc-700">
+      {/* Top Auth Buttons */}
+      <header className="flex justify-end gap-4 p-4 sm:p-6">
+        {user ? (
+          <>
+            <Link
+              href="/profile"
+              className="inline-block px-5 py-2 rounded-full backdrop-blur-sm bg-green-400 text-black font-bold shadow-md hover:bg-green-500 hover:scale-105 transition duration-300"
+            >
+              Profile
+            </Link>
+            <Link
+              href="/"
+              className="inline-block px-5 py-2 rounded-full backdrop-blur-sm bg-blue-300 text-black font-bold shadow-md hover:bg-blue-400 hover:scale-105 transition duration-300"
+            >
+              Home
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link
+              href="/login"
+              className="inline-block px-5 py-2 rounded-full backdrop-blur-sm bg-blue-600 text-white font-bold shadow-md hover:bg-gray-300 hover:scale-105 transition duration-300"
+            >
+              Login
+            </Link>
+            <Link
+              href="/register"
+              className="inline-block px-5 py-2 rounded-full backdrop-blur-sm bg-green-400 text-white font-bold shadow-md hover:bg-gray-300 hover:scale-105 transition duration-300"
+            >
+              Register
+            </Link>
+          </>
+        )}
+      </header>
+
+      {/* Main Grid Layout */}
+      <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8 px-6 py-10 sm:px-12">
+
+        {/* Sidebar - Categories */}
+        <aside className="flex flex-col gap-6 p-6 bg-white dark:bg-zinc-800 rounded-2xl shadow-xl">
+          <h2 className="text-xl font-bold text-center text-gray-800 dark:text-white">
+            Categories
+          </h2>
           <div className="flex flex-col gap-3">
             {categories.map((cat) => (
               <Link
                 key={cat._id}
-                href={`/category/${cat.categoryKey}`} // ⬅️ updated route
-                className="text-lg text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-500 transition-colors duration-300"
+                href={`/category/${cat.categoryKey}`}
+                className="block text-center bg-blue-200 hover:bg-blue-300 text-black font-bold py-2 px-4 rounded-lg shadow-sm hover:shadow-md transition-transform transform hover:scale-105"
               >
                 {cat.categoryName}
               </Link>
             ))}
           </div>
-        </div>
-      </aside>
+        </aside>
 
-      {/* Main Content - Listings */}
-      <main className="flex flex-col gap-6">
-        {listings.map((listing) => (
-          <div
-            key={listing._id}
-            className="p-6 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:scale-105"
-          >
-            <h2 className="font-bold text-2xl text-gray-800 dark:text-white mb-3">
-              {listing.itemTitle}
-            </h2>
-            <p className="text-lg text-gray-700 dark:text-gray-300 whitespace-pre-line">
-              {listing.itemDescription}
-            </p>
-          </div>
-        ))}
-      </main>
+        {/* Main Content - Listings */}
+        <main className="flex flex-col gap-6">
+          <h2 className="text-2xl font-extrabold text-gray-800 dark:text-white">
+            All Listings
+          </h2>
+
+          {listings.length > 0 ? (
+            listings.map((listing) => (
+              <div
+                key={listing._id}
+                className="p-6 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-2xl shadow-lg hover:shadow-2xl transition-transform transform hover:scale-[1.03]"
+              >
+                <h3 className="font-bold text-xl text-gray-800 dark:text-white mb-2">
+                  {listing.itemTitle}
+                </h3>
+                <p className="text-base text-gray-700 dark:text-gray-300 whitespace-pre-line truncate-lines-2">
+                  {listing.itemDescription}
+                </p>
+              </div>
+            ))
+          ) : (
+            <div className="text-lg text-gray-600 dark:text-gray-400">
+              No listings found. Try checking back later or adding new items.
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }

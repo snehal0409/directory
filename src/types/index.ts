@@ -10,8 +10,8 @@ export interface AdminType {
 }
 // Define and export CategoryType
 export interface SubcategoryType {
-  [x: string]: any;
-  subcategoryDescription: ReactNode;
+ 
+  subcategoryDescription: string;
   _id: string;
   subcategoryKey: string;
   subcategoryName: string;
@@ -43,14 +43,12 @@ export interface ActionResult {
 
 export interface ItemType {
  
-
-
-  
   _id: string;
   itemTitle: string;
   itemDescription: string;
   subcategoryKey: string;
   categoryKey: string;
+  imageUrl?: string;
   userId: string;
   createdAt: Date;
   updatedAt: Date;
