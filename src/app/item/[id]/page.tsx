@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { getItemById } from './actions';
 import moment from 'moment';
+import { getItemById } from './actions';
 import { notFound } from 'next/navigation';
 
 type Item = {
@@ -8,6 +8,10 @@ type Item = {
   itemTitle: string;
   itemDescription: string;
   itemSubcategory: string;
+  categoryName: string;
+  categoryKey: string;
+  subcategoryName: string;
+  subcategoryKey: string;
   createdAt: string;
   createdBy: {
     username: string;
@@ -16,13 +20,9 @@ type Item = {
 
 export default async function ItemPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const singleItem = await getItemById(id);
+  const singleItem: Item | null = await getItemById(id);
 
   if (!singleItem) return notFound();
-
-  const { createdAt, createdBy } = singleItem;
-  const postedDate = moment(createdAt).fromNow(); // e.g., "2 hours ago", "Yesterday"
-  const username = createdBy?.username || "Unknown User";
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-yellow-50 to-orange-100 dark:from-zinc-900 dark:to-black p-6 sm:p-12">
@@ -38,7 +38,7 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
       </div>
 
       <div className="flex p-6">
-        {/* Left Sidebar - Categories and Subcategories (Only for the current item) */}
+        {/* Left Sidebar - Category Info */}
         <aside className="w-64 bg-white dark:bg-zinc-800 shadow-xl rounded-lg p-6">
           <div>
             <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">Category</h2>
@@ -56,20 +56,38 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
 
         {/* Main Content Area */}
         <main className="flex-1 bg-white dark:bg-zinc-900 p-8 rounded-lg shadow-2xl ml-8">
-          {/* Item Content */}
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">{singleItem.itemTitle}</h1>
+          {/* Item Title */}
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+            {singleItem.itemTitle}
+          </h1>
 
-          {/* Username and Date */}
-          <div className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            Posted by{" "}
-            <Link href="#" className="font-bold text-blue-600 dark:text-blue-400 underline hover:text-blue-500">
-              {username}
-            </Link>{" "}
-            • {postedDate}
+          {/* Posted by and Date */}
+          <div className="mb-6 text-sm text-gray-600 dark:text-gray-400">
+            <Link
+              href="#"
+              className="font-semibold text-gray-800 dark:text-white hover:underline"
+            >
+              {singleItem.createdBy?.username ?? 'Unknown'}
+            </Link>
+            <span className="mx-1">•</span>
+            <span>
+              {moment(singleItem.createdAt).calendar(null, {
+                sameDay: '[Today]',
+                nextDay: '[Tomorrow]',
+                nextWeek: 'dddd',
+                lastDay: '[Yesterday]',
+                lastWeek: '[Last] dddd',
+                sameElse: 'MMM Do YYYY',
+              })}
+              {' • '}
+              {moment(singleItem.createdAt).format('h:mm A')}
+            </span>
           </div>
 
-          {/* Description */}
-          <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-400">{singleItem.itemDescription}</p>
+          {/* Item Description */}
+          <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-400">
+            {singleItem.itemDescription}
+          </p>
         </main>
       </div>
     </div>

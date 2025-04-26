@@ -1,6 +1,7 @@
 import { CategoryType, SubcategoryType, ItemType } from "@/types";
 import { getCategoryData } from "./actions";
 import Link from "next/link";
+import moment from "moment"; // Import moment for date formatting
 
 interface Props {
   params: {
@@ -71,17 +72,42 @@ export default async function CategoryPage({ params }: Props) {
         <main className="flex flex-col gap-6">
           {listings.length > 0 ? (
             listings.map((listing) => (
-              <div
+              <Link
                 key={listing._id}
+                href={`/item/${listing._id}`}
                 className="p-6 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:scale-105"
               >
-                <h2 className="font-bold text-2xl text-gray-800 dark:text-white mb-3">
+                {/* Title */}
+                <h2 className="font-bold text-2xl text-gray-800 dark:text-white mb-2">
                   {listing.itemTitle}
                 </h2>
+
+                {/* Username and Date below Title */}
+                <div className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  <Link
+                    href={`/profile/${listing.createdBy?._id}`}
+                    className="text-blue-600 dark:text-blue-400 hover:underline font-semibold"
+                  >
+                    {listing.createdBy?.username ?? "Unknown"}
+                  </Link>
+                  <span className="mx-2">•</span>
+                  <span className="text-gray-500 dark:text-gray-300">
+                    {moment(listing.createdAt).calendar(null, {
+                      sameDay: '[Today]',
+                      nextDay: '[Tomorrow]',
+                      nextWeek: 'dddd',
+                      lastDay: '[Yesterday]',
+                      lastWeek: '[Last] dddd',
+                      sameElse: 'MMM Do YYYY',
+                    })} at {moment(listing.createdAt).format('h:mm A')}
+                  </span>
+                </div>
+
+                {/* Description */}
                 <p className="text-lg text-gray-700 dark:text-gray-300 whitespace-pre-line truncate-lines-2">
                   {listing.itemDescription}
                 </p>
-              </div>
+              </Link>
             ))
           ) : (
             <div className="text-gray-600 dark:text-gray-400 text-lg">

@@ -3,6 +3,7 @@
 import { connectDB } from '@/lib/mongodb';
 import User from '@/models/user';
 import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
 
 type AddUserInput = {
   username: string;
@@ -20,7 +21,10 @@ export async function addUser({ username, email, password }: AddUserInput) {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  const userId = new mongoose.Types.ObjectId().toString()
+
   const newUser = new User({
+    userId,
     username,
     email,
     password: hashedPassword,

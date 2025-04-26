@@ -1,4 +1,5 @@
-import { ReactNode } from "react";
+import { Types } from "mongoose";
+
 
 export interface AdminType {
   email: any;
@@ -33,6 +34,7 @@ export type UserType = {
   _id: string;
   username: string;
   email: string;
+  name: string;
   createdAt: string; // Or Date, depending on your setup
 };
 
@@ -49,11 +51,12 @@ export interface ItemType {
   subcategoryKey: string;
   categoryKey: string;
   imageUrl?: string;
-  userId: string;
+  userId: Types.ObjectId; 
   createdAt: Date;
   updatedAt: Date;
   timeStamp: string;
-  
+  createdBy: UserType;
+ 
 }
 
 

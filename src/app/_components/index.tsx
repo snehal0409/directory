@@ -1,7 +1,8 @@
-import Link from "next/link";
-import { getAllItems } from "../user/listings/actions";
-import { getAllCategories } from "@/app/admin/categories/actions/getAllCategories";
-import type { ItemType, CategoryType } from "@/types";
+import Link from 'next/link';
+import moment from 'moment';
+import { getAllItems } from '../user/listings/actions';
+import { getAllCategories } from '@/app/admin/categories/actions/getAllCategories';
+import type { ItemType, CategoryType } from '@/types';
 
 type Props = {
   user: {
@@ -16,7 +17,6 @@ export default async function Home({ user }: Props) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-zinc-900 dark:to-black">
-
       {/* Top Auth Buttons */}
       <header className="flex justify-end gap-4 p-4 sm:p-6">
         {user ? (
@@ -54,12 +54,9 @@ export default async function Home({ user }: Props) {
 
       {/* Main Grid Layout */}
       <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8 px-6 py-10 sm:px-12">
-
         {/* Sidebar - Categories */}
         <aside className="flex flex-col gap-6 p-6 bg-white dark:bg-zinc-800 rounded-2xl shadow-xl">
-          <h2 className="text-xl font-bold text-center text-gray-800 dark:text-white">
-            Categories
-          </h2>
+          <h2 className="text-xl font-bold text-center text-gray-800 dark:text-white">Categories</h2>
           <div className="flex flex-col gap-3">
             {categories.map((cat) => (
               <Link
@@ -75,9 +72,7 @@ export default async function Home({ user }: Props) {
 
         {/* Main Content - Listings */}
         <main className="flex flex-col gap-6">
-          <h2 className="text-2xl font-extrabold text-gray-800 dark:text-white">
-            All Listings
-          </h2>
+          <h2 className="text-2xl font-extrabold text-gray-800 dark:text-white">All Listings</h2>
 
           {listings.length > 0 ? (
             listings.map((listing) => (
@@ -85,9 +80,34 @@ export default async function Home({ user }: Props) {
                 key={listing._id}
                 className="p-6 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-2xl shadow-lg hover:shadow-2xl transition-transform transform hover:scale-[1.03]"
               >
+                {/* Title */}
                 <h3 className="font-bold text-xl text-gray-800 dark:text-white mb-2">
-                  {listing.itemTitle}
+                  <Link href={`/item/${listing._id}`} className="hover:underline">
+                    {listing.itemTitle}
+                  </Link>
                 </h3>
+
+                {/* Username + Date */}
+                <div className="mb-3 text-sm text-gray-600 dark:text-gray-400">
+                  <Link
+                    href={`${listing.createdBy?._id ?? '#'}`}
+                    className="font-bold text-blue-700 dark:text-blue-300 hover:underline"
+                  >
+                    {listing.createdBy?.username ?? 'Unknown'}
+                  </Link>{' '}
+                  ·{' '}
+                  {moment(listing.createdAt).calendar(null, {
+                    sameDay: '[Today]',
+                    nextDay: '[Tomorrow]',
+                    nextWeek: 'dddd',
+                    lastDay: '[Yesterday]',
+                    lastWeek: '[Last] dddd',
+                    sameElse: 'MMM Do YYYY',
+                  })}{' '}
+                  • {moment(listing.createdAt).format('h:mm A')}
+                </div>
+
+                {/* Description */}
                 <p className="text-base text-gray-700 dark:text-gray-300 whitespace-pre-line truncate-lines-2">
                   {listing.itemDescription}
                 </p>

@@ -5,6 +5,7 @@ import User from '@/models/user';
 import { connectDB } from '@/lib/mongodb';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
+import mongoose  from 'mongoose';
 
 const SECRET = process.env.JWT_SECRET!;
 
@@ -17,7 +18,7 @@ export const hashPassword = async (password: string): Promise<string> => {
 
 export async function register(formData: FormData) {
   await connectDB();
-  const username = formData.get('username') as string;
+  const username = formData.get('username') as string;  
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
@@ -27,8 +28,10 @@ export async function register(formData: FormData) {
   const existing2 = await User.findOne({ email });
   if (existing2) throw new Error('Email already exists');
 
+  const userId= new mongoose.Types.ObjectId().toString()
+
   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = new User({ username, email, password: hashedPassword });
+  const user = new User({ userId, username, email, password: hashedPassword });
   await user.save();
 }
 

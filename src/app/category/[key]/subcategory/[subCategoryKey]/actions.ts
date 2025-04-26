@@ -1,21 +1,49 @@
-import { ItemType } from "@/types";
-import Item from "@/models/item";
+"use server";
 
-export const getItemsForSubcategory = async (subCategoryKey: string): Promise<ItemType[]> => {
+import { connectDB } from "@/lib/mongodb";
+import Item from "@/models/item";
+import { ItemType } from "@/types";
+
+export async function getItemsForSubcategory(subCategoryKey: string): Promise<ItemType[]> {
+  await connectDB();
+
   const items = await Item.aggregate([
-    { $match: { subcategoryKey: subCategoryKey } },
     {
-      $project: {
-        _id: 1,
-        itemTitle: 1,
-        itemDescription: 1,
-        subcategoryKey: 1,
-        categoryKey: 1,
-        created_time: 1,
+      $match: {
+        subcategoryKey: subCategoryKey,
       },
     },
-    { $sort: { created_time: -1 } },
-  ]) as ItemType[];
+    {
+      $lookup: {
+        from: 'users',           // join with users collection
+        localField: 'userId',     // Item.userId
+        foreignField: 'userId',   // User.userId
+        as: 'createdBy',
+      },
+    },
+    {
+      $unwind: {
+        path: '$createdBy',
+        preserveNullAndEmptyArrays: true,  // In case user was deleted
+      },
+    },
+    {
+      $sort: {
+        createdAt: -1,
+      },
+    },
+    {
+      $project: {
+        itemTitle: 1,
+        itemDescription: 1,
+        createdAt: 1,
+        createdBy: {
+          _id: '$createdBy._id',
+          username: '$createdBy.username',
+        },
+      },
+    },
+  ]);
 
-  return items;
-};
+  return JSON.parse(JSON.stringify(items)) as ItemType[];
+}

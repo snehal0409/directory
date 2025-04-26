@@ -12,8 +12,10 @@ export interface LeanItem {
   itemTitle: string;
   itemDescription: string;
   subcategoryKey: string;
-  userId: string;
+  userId: Types.ObjectId;
+
 }
+
 
 const ItemSchema = new Schema<ItemDocument>(
   {
@@ -21,6 +23,7 @@ const ItemSchema = new Schema<ItemDocument>(
     itemDescription: { type: String, required: true },
     subcategoryKey: { type: String, required: true },
     userId: { type: String, required: true },
+    
   },
   { timestamps: true }
 );
