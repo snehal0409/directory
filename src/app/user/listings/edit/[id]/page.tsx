@@ -42,15 +42,19 @@ export default async function EditItemPage({ params }: Props) {
 
   const selectedCategoryKey = selectedSubcat?.subcategoryKey || '';
 
+  // Ensure 'images' property exists, otherwise default to an empty array
+  const itemWithImages = { ...item, images: item.images || [] };
+
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">Edit Listing</h2>
       <EditItemForm
         item={{
-          _id: item._id.toString(),
-          itemTitle: item.itemTitle,
-          itemDescription: item.itemDescription,
-          subCategoryKey: item.subcategoryKey,
+          _id: itemWithImages._id.toString(),
+          itemTitle: itemWithImages.itemTitle,
+          itemDescription: itemWithImages.itemDescription,
+          subCategoryKey: itemWithImages.subcategoryKey,
+          images: itemWithImages.images, // Pass images here
         }}
         selectedCategoryKey={selectedCategoryKey}
         categories={formattedCategories}

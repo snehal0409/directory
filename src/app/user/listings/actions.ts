@@ -116,6 +116,7 @@ export async function getAllItems() {
       $project: {
         itemTitle: 1,
         itemDescription: 1,
+        images: 1,
         createdAt: 1,
         createdBy: {
           _id: '$createdBy._id',

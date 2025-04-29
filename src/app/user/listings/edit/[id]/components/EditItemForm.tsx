@@ -1,7 +1,6 @@
-// src/app/user/listings/edit/[id]/components/EditItemForm.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateItem } from '../actions'; // Import the server action
 
@@ -11,6 +10,7 @@ type EditItemFormProps = {
     itemTitle: string;
     itemDescription: string;
     subCategoryKey: string;
+    images: { url: string; thumb: string }[]; // Assuming images are stored like this
   };
   selectedCategoryKey: string;
   categories: { categoryKey: string; categoryName: string }[];
@@ -27,6 +27,28 @@ const EditItemForm = ({
   const [itemTitle, setItemTitle] = useState(item.itemTitle);
   const [itemDescription, setItemDescription] = useState(item.itemDescription);
   const [subCategoryKey, setSubCategoryKey] = useState(item.subCategoryKey);
+  const [imageFile, setImageFile] = useState<string | null>(null); // State for the image file
+  const [imagePreview, setImagePreview] = useState<string | null>(null); // State for the image preview
+
+  useEffect(() => {
+    if (item.images && item.images.length > 0) {
+      setImagePreview(`/uploads/thumbnails/${item.images[0].thumb}`);
+    }
+  }, [item]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        setImageFile(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -37,6 +59,7 @@ const EditItemForm = ({
         itemTitle,
         itemDescription,
         subCategoryKey,
+        imageFile, // Send the image if it's updated
       });
       router.push('/user/listings');
     } catch (error) {
@@ -45,7 +68,7 @@ const EditItemForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="mb-4">
         <label htmlFor="itemTitle" className="block text-sm font-medium">Item Title</label>
         <input
@@ -97,6 +120,21 @@ const EditItemForm = ({
             </option>
           ))}
         </select>
+      </div>
+
+      {/* Image Upload */}
+      <div className="mb-4">
+        <label htmlFor="image" className="block text-sm font-medium">Upload Image</label>
+        <input
+          type="file"
+          id="image"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="border p-2 mt-1 block w-full"
+        />
+        {imagePreview && (
+          <img src={imagePreview} alt="Image Preview" className="mt-2 w-32" />
+        )}
       </div>
 
       <div className="flex justify-between">

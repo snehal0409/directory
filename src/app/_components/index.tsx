@@ -3,6 +3,7 @@ import moment from 'moment';
 import { getAllItems } from '../user/listings/actions';
 import { getAllCategories } from '@/app/admin/categories/actions/getAllCategories';
 import type { ItemType, CategoryType } from '@/types';
+import Image from 'next/image';
 
 type Props = {
   user: {
@@ -80,6 +81,8 @@ export default async function Home({ user }: Props) {
                 key={listing._id}
                 className="p-6 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-2xl shadow-lg hover:shadow-2xl transition-transform transform hover:scale-[1.03]"
               >
+               
+
                 {/* Title */}
                 <h3 className="font-bold text-xl text-gray-800 dark:text-white mb-2">
                   <Link href={`/item/${listing._id}`} className="hover:underline">
@@ -106,6 +109,20 @@ export default async function Home({ user }: Props) {
                   })}{' '}
                   • {moment(listing.createdAt).format('h:mm A')}
                 </div>
+                {/* Image */}
+                {listing.images && listing.images[0]?.url && (
+                  <Link href={`/item/${listing._id}`}>
+                    <div className="relative w-full h-64 mb-4">
+                      <Image
+                        src={`/uploads/${listing.images[0].url}`} // Correct image path
+                        alt={listing.itemTitle}
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-lg cursor-pointer"
+                      />
+                    </div>
+                  </Link>
+                )}
 
                 {/* Description */}
                 <p className="text-base text-gray-700 dark:text-gray-300 whitespace-pre-line truncate-lines-2">
@@ -113,6 +130,7 @@ export default async function Home({ user }: Props) {
                 </p>
               </div>
             ))
+            
           ) : (
             <div className="text-lg text-gray-600 dark:text-gray-400">
               No listings found. Try checking back later or adding new items.

@@ -59,9 +59,10 @@ export default async function ListingsPage() {
                   <td className="px-4 py-3 border text-gray-600">{itemDescription}</td>
                   <td className="px-4 py-3 border text-center">
                     {/* Display the image thumbnail if exists */}
-                    {images?.[0].thumb ? (
+                    {images?.length > 0 && images[0]?.thumb ? (
+
                       <img
-                        src={`/uploads/thumbnails/${images?.[0].thumb}`} // The image URL (could be a path or cloud URL)
+                        src={`/uploads/thumbnails/${images?.[0].thumb }`} // The image URL (could be a path or cloud URL)
                         alt="Listing image"
                         className="w-16 h-16 object-cover rounded"
                       />

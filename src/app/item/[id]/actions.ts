@@ -50,6 +50,7 @@ export async function getItemById(id: string) {
         itemTitle: 1,
         itemDescription: 1,
         createdAt: 1,
+        images: 1,
         subcategoryName: '$subcat.subcategoryName',
         subcategoryKey: '$subcat.subcategoryKey', // fixed: typo in your code
         categoryName: '$cat.categoryName',

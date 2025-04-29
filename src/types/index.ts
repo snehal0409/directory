@@ -44,6 +44,8 @@ export interface ActionResult {
 }
 
 export interface ItemType {
+  images: any;
+  images: boolean;
  
   _id: string;
   itemTitle: string;

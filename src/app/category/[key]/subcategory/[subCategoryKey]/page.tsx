@@ -2,6 +2,7 @@ import { getItemsForSubcategory } from "./actions";
 import { ItemType } from "@/types";
 import Link from "next/link";
 import moment from "moment";
+import Image from "next/image"; // Import Image component
 
 type SubcategoryPageProps = {
   params: {
@@ -82,6 +83,21 @@ export default async function SubcategoryPage({ params }: SubcategoryPageProps) 
                     })} at {moment(listing.createdAt).format('h:mm A')}
                   </span>
                 </div>
+
+                {/* Image */}
+                {listing.images && listing.images[0]?.url && (
+                  <Link href={`/item/${listing._id}`}>
+                    <div className="relative w-full h-64 mb-4">
+                      <Image
+                        src={`/uploads/${listing.images[0].url}`} // Correct image path
+                        alt={listing.itemTitle}
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-lg cursor-pointer"
+                      />
+                    </div>
+                  </Link>
+                )}
 
                 {/* Description */}
                 <p className="text-lg text-gray-700 dark:text-gray-300 whitespace-pre-line truncate-lines-2">

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import moment from 'moment';
 import { getItemById } from './actions';
 import { notFound } from 'next/navigation';
+import Image from 'next/image'; // Import Image component
 
 type Item = {
   _id: string;
@@ -16,6 +17,7 @@ type Item = {
   createdBy: {
     username: string;
   };
+  images: { url: string }[]; // Assuming `images` is an array of objects containing `url`
 };
 
 export default async function ItemPage({ params }: { params: Promise<{ id: string }> }) {
@@ -83,6 +85,19 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
               {moment(singleItem.createdAt).format('h:mm A')}
             </span>
           </div>
+
+          {/* Image */}
+          {singleItem.images && singleItem.images[0]?.url && (
+            <div className="relative w-full h-64 mb-4">
+              <Image
+                src={`/uploads/${singleItem.images[0].url}`} // Correct image path
+                alt={singleItem.itemTitle}
+                layout="fill"
+                objectFit="cover"
+                className="rounded-lg"
+              />
+            </div>
+          )}
 
           {/* Item Description */}
           <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-400">

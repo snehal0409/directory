@@ -37,6 +37,7 @@ export async function getItemsForSubcategory(subCategoryKey: string): Promise<It
         itemTitle: 1,
         itemDescription: 1,
         createdAt: 1,
+        images: 1,
         createdBy: {
           _id: '$createdBy._id',
           username: '$createdBy.username',
