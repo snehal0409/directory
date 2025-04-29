@@ -89,6 +89,7 @@ export async function getItemsWithCategories(userId: string) {
         itemDescription: 1,
         subcategoryName: '$subcat.subcategoryName',
         categoryName: '$cat.categoryName',
+        images: 1,
       },
     },
   ]);

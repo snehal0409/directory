@@ -1,8 +1,8 @@
-// src/app/(user)/dashboard/my-listings/add/components/AddItemForm.tsx
-'use client';
+'use client'
 
 import { useEffect, useState } from 'react';
-import { addItem } from './../actions';
+import { addItem } from '../actions'; 
+
 
 type Category = {
   categoryKey: string;
@@ -23,6 +23,10 @@ type Props = {
 export default function AddItemForm({ categories, subcategories }: Props) {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategory[]>([]);
+  const [imageFile, setImageFile] = useState<string | null>(null); // State for the image file
+  const [imagePreview, setImagePreview] = useState<string | null>(null); // State for the image preview
+  const [error, setError] = useState('');
+  
 
   useEffect(() => {
     setFilteredSubcategories(
@@ -30,8 +34,52 @@ export default function AddItemForm({ categories, subcategories }: Props) {
     );
   }, [selectedCategory, subcategories]);
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+
+      // Create a preview URL for the selected image
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+
+      const reader = new FileReader()
+
+      reader.onload = (e: any) => {
+        setImageFile(e.target.result);
+      }
+
+      reader.readAsDataURL(file)
+    }
+  };
+
+  const handleSubmit = async (formData: FormData) => {
+      const subcategoryKey = formData.get('subcategoryKey') as string;
+      const itemTitle = formData.get('itemTitle') as string;
+      const itemDescription = formData.get('itemDescription') as string;
+
+      if(!subcategoryKey || !itemTitle || !itemDescription) {
+        setError('Required fields are empty')
+
+        return
+      }
+      
+      const data = {
+        subcategoryKey,
+        itemTitle,
+        itemDescription,
+        imageFile: imageFile??'',
+      }
+
+      console.log(data)
+
+      addItem(data)
+    }
+
+
+
   return (
-    <form action={addItem} className="space-y-4">
+    
+    <form action={handleSubmit} method="POST" encType="multipart/form-data" className="space-y-4">
       {/* Category Selection */}
       <div>
         <label htmlFor="category" className="block mb-1">Category</label>
@@ -99,6 +147,20 @@ export default function AddItemForm({ categories, subcategories }: Props) {
         />
       </div>
 
+      {/* Image Upload */}
+      <div>
+        <label htmlFor="image" className="block mb-1">Upload Image</label>
+        <input
+          id="image"
+          type="file"
+          name="file" // Match the server-side formData key
+          accept="image/*"
+          onChange={handleFileChange} // Handle file input change
+          className="w-full border p-2 rounded"
+        />
+        {imagePreview && <img src={imagePreview} alt="Image Preview" className="mt-2 w-32" />}
+      </div>
+
       {/* Submit Button */}
       <button
         type="submit"
@@ -106,6 +168,9 @@ export default function AddItemForm({ categories, subcategories }: Props) {
       >
         Add Listing
       </button>
+
+      {error && <p className="text-red-500 mb-4 text-sm text-center">{error}</p>}
+
     </form>
   );
 }

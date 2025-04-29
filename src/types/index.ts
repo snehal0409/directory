@@ -50,7 +50,8 @@ export interface ItemType {
   itemDescription: string;
   subcategoryKey: string;
   categoryKey: string;
-  imageUrl?: string;
+  image?: string;
+  imageUrl?: string; 
   userId: Types.ObjectId; 
   createdAt: Date;
   updatedAt: Date;
