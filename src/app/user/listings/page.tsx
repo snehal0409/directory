@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { session } from '@/app/actions/auth';
 import { getItemsWithCategories } from './actions';
 import DeleteButton from './components/DeleteButton';
-import { Image } from '@/models/item'
+import { Image as ImageType } from '@/models/item'
+import Image from 'next/image';
 
 interface Item {
   _id: string;
@@ -11,7 +12,7 @@ interface Item {
   categoryName: string;
   subcategoryName: string;
   itemDescription: string;
-  images: Image[];
+  images: ImageType[];
 }
 
 export default async function ListingsPage() {
@@ -61,9 +62,8 @@ export default async function ListingsPage() {
                     {/* Display the image thumbnail if exists */}
                     {images?.length > 0 && images[0]?.thumb ? (
 
-                      <img
-                        src={`/uploads/thumbnails/${images?.[0].thumb }`} // The image URL (could be a path or cloud URL)
-                        alt="Listing image"
+                      <Image
+                        src={`/uploads/thumbnails/${images?.[0].thumb}`}                         alt="Listing"
                         className="w-16 h-16 object-cover rounded"
                       />
                     ) : (

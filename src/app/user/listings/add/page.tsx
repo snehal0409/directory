@@ -1,11 +1,8 @@
-// src/app/(user)/dashboard/my-listings/add/page.tsx
-import { getSessionUser } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import dbConnect from '@/lib/mongodb';
 import Category from '@/models/category';
 import {Subcategory} from '@/models/subcategory';
 import AddItemForm from './components/AddItemForm';
-import { getItemsWithCategories } from '../actions';
 import { session } from '@/app/actions/auth';
 
 export default async function AddItemPage() {
@@ -16,7 +13,7 @@ export default async function AddItemPage() {
          redirect("/user/listings"); 
       }
   
-      const items = await getItemsWithCategories(user.id)
+     
     
   await dbConnect();
 

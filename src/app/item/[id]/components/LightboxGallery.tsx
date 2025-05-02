@@ -21,7 +21,7 @@ export default function LightboxGallery({ item }: Props) {
         {/* Main Image */}
         <div
           className="relative w-full h-64 mb-4 rounded-lg overflow-hidden cursor-pointer"
-          onClick={() => setLightboxImage(`/uploads/${item.images[0].url}`)}
+         
         >
           <Image
             src={`/uploads/${item.images[0].url}`}
@@ -29,6 +29,12 @@ export default function LightboxGallery({ item }: Props) {
             layout="fill"
             objectFit="cover"
             className="rounded-lg"
+            onClick={() => setLightboxImage(`/uploads/${item.images[0].url}`)}
+            onKeyUp={(e => {
+              if (e.key === 'Enter') {
+                setLightboxImage(`/uploads/${item.images[0].url}`);
+              }
+            })}
           />
         </div>
 
@@ -38,13 +44,19 @@ export default function LightboxGallery({ item }: Props) {
             <div
               key={index}
               className="relative w-32 h-20 flex-shrink-0 rounded-md overflow-hidden border border-gray-300 dark:border-zinc-700 cursor-pointer"
-              onClick={() => setLightboxImage(`/uploads/${img.url}`)}
             >
               <Image
                 src={`/uploads/${img.url}`}
                 alt={`Image ${index + 2}`}
                 layout="fill"
                 objectFit="cover"
+                onClick={() => setLightboxImage(`/uploads/${img.url}`)}
+                onKeyUp={(e) => {
+                  if (e.key === 'Enter') {
+                    setLightboxImage(`/uploads/${img.url}`);
+                  }
+                }}
+                
               />
             </div>
           ))}
@@ -55,11 +67,9 @@ export default function LightboxGallery({ item }: Props) {
       {lightboxImage && (
         <div
           className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-4 overflow-auto"
-          onClick={() => setLightboxImage(null)}
         >
           <div
             className="relative max-w-[90vw] max-h-[90vh] mx-auto"
-            onClick={(e) => e.stopPropagation()}
           >
             <Image
               src={lightboxImage}
@@ -67,6 +77,8 @@ export default function LightboxGallery({ item }: Props) {
               width={1200}
               height={800}
               className="max-w-full max-h-[90vh] object-contain rounded-lg"
+              onClick={() => setLightboxImage(null)}
+
             />
             <button
               onClick={() => setLightboxImage(null)}

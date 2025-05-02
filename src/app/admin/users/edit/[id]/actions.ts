@@ -24,7 +24,7 @@ export const getUserById = async (id: string): Promise<UserType | null> => {
   if (!user) return null;
 
   // Safely convert createdAt to Date and handle as a string or Date
-  const createdAtDate = new Date(user.createdAt);
+ 
   const userWithId: UserType = {
     _id: user._id.toString(),
     username: user.username,

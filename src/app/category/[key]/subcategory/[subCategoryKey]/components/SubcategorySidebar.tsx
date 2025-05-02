@@ -1,6 +1,3 @@
-// src/app/category/[key]/subcategory/[subCategoryKey]/components/SubcategorySidebar.tsx
-import Link from "next/link";
-
 interface Props {
   category: {
     categoryName: string;

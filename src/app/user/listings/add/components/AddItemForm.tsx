@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { addItem } from '../actions';
 
 type Category = {
@@ -163,9 +164,9 @@ export default function AddItemForm({ categories, subcategories }: Props) {
         <div className="mt-4">
           {imagePreviews.map((preview, index) => (
             <div key={index} className="relative inline-block mr-2">
-              <img
+              <Image  
                 src={preview}
-                alt={`Image Preview ${index}`}
+                alt={`Preview ${index}`}
                 className="w-32 h-32 object-cover cursor-pointer"
                 onClick={() => openLightbox(preview)} // Open lightbox on image click
               />
@@ -202,7 +203,7 @@ export default function AddItemForm({ categories, subcategories }: Props) {
             >
               ×
             </button>
-            <img
+            <Image
               src={selectedImage}
               alt="Lightbox"
               className="max-w-full max-h-[80vh] object-contain"

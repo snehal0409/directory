@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { updateItem } from '../actions';
 
@@ -35,7 +36,7 @@ const EditItemForm = ({
   const [subCategoryKey, setSubCategoryKey] = useState(item.subCategoryKey);
   const [existingImages, setExistingImages] = useState<Image[]>(item.images);
   const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
-  const [mainImage, setMainImage] = useState<string>(existingImages[0]?.url || '');
+  const [, setMainImage] = useState<string>(existingImages[0]?.url || '');
   const [previewImage, setPreviewImage] = useState<string | null>(null); // modal preview
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,11 +132,11 @@ const EditItemForm = ({
         </div>
 
         <div>
-          <label className="block mb-1">Image Gallery</label>
+          <h2 className="block mb-1">Image Gallery</h2>
           <div className="flex flex-wrap gap-2">
             {existingImages.map((img, index) => (
               <div key={index} className="relative inline-block">
-                <img
+                <Image
                   src={`/uploads/thumbnails/${img.thumb}`}
                   className="w-24 h-24 object-cover cursor-pointer"
                   alt={`Gallery image ${index + 1}`}
@@ -166,7 +167,7 @@ const EditItemForm = ({
           <div className="flex gap-2 mt-2 flex-wrap">
             {newImageFiles.map((file, index) => (
               <div key={index} className="relative">
-                <img
+                <Image
                   src={URL.createObjectURL(file)}
                   className="w-24 h-24 object-cover rounded"
                   alt={`New upload ${index + 1}`}
@@ -202,11 +203,9 @@ const EditItemForm = ({
       {previewImage && (
         <div
           className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
-          onClick={() => setPreviewImage(null)}
         >
           <div
             className="bg-white p-4 rounded relative max-w-3xl w-full"
-            onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setPreviewImage(null)}
@@ -214,7 +213,7 @@ const EditItemForm = ({
             >
               ×
             </button>
-            <img
+            <Image
               src={previewImage}
               alt="Preview"
               className="w-full max-h-[80vh] object-contain"

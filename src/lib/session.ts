@@ -59,7 +59,7 @@ export async function getSessionUser() {
     } | null;
 
     return user;
-  } catch (err) {
+  } catch  {
     return null;
   }
 }
