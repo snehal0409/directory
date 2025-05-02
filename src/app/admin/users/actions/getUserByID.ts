@@ -12,17 +12,13 @@ export const getUserById = async (id: string): Promise<UserType | null> => {
 
   if (!user) return null;
 
-  // Handle createdAt field and check if it's a valid Date object
-  const createdAt = user.createdAt && !isNaN(new Date(user.createdAt).getTime()) 
-    ? new Date(user.createdAt).toISOString() 
-    : new Date().toISOString();  // Fallback if createdAt is invalid or undefined
 
   const userWithId: UserType = {
     _id: user._id.toString(),
     username: user.username,
     email: user.email,
-    createdAt,  // Ensure it's a valid ISO string
+    createdAt: user.createdAt, 
+    updatedAt: user.updatedAt, 
   };
-
   return userWithId;
 };

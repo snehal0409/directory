@@ -17,7 +17,7 @@ export async function getSessionAdmin() {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
-    const admin = await Admin.findById(decoded.id).lean();
+    const admin = await Admin.findById(decoded.id);
     return admin;
   } catch (err) {
     console.log(err);

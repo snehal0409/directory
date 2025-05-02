@@ -23,7 +23,7 @@ export default function AdminLoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
-      <h2 className="text-xl font-bold">Admin Login</h2>
+      <h2 className="text-xl font-bold"></h2>
 
       <input
         type="text"

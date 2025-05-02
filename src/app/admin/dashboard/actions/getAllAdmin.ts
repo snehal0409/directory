@@ -1,15 +1,14 @@
-"use server";
+'use server'
 
-import { connectDB } from "././../../../../lib/mongodb";
-import Admin from "./../../../../models/admin";
+import Admin from "@/models/admin";
+import { connectDB } from "@/lib/mongodb";
+import { AdminType } from "@/types";
 
-export async function getAllAdmins() {
-    await connectDB();
-  
-    const admins = await Admin.find().lean() as unknown as Array<{ _id: unknown, username: string, password: string, createdAt: Date, updatedAt: Date }>;
-  
-    return admins.map(admin => ({
-      _id: String(admin._id),
+export async function getAllAdmins(): Promise<AdminType[]> {
+  await connectDB();
+  const admins = await Admin.find({}).lean();
+  return admins.map((admin: any) => ({
+    _id: admin._id.toString(),
       username: admin.username,
       password: admin.password, // Add this explicitly
       createdAt: admin.createdAt,

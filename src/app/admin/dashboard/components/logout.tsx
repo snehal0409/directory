@@ -1,5 +1,5 @@
-// src/app/.admin/profile/components/LogoutButton.tsx
-"use client"; // Marks this as a Client Component
+
+"use client"
 
 import React from "react";
 import { useRouter } from "next/navigation";

@@ -29,7 +29,8 @@ export const getUserById = async (id: string): Promise<UserType | null> => {
     _id: user._id.toString(),
     username: user.username,
     email: user.email,
-    createdAt: createdAtDate instanceof Date && !isNaN(createdAtDate.getTime()) ? createdAtDate.toISOString() : new Date().toISOString(), // Ensure valid Date
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
   };
 
   return userWithId;

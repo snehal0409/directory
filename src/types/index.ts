@@ -1,8 +1,7 @@
 import { Types } from "mongoose";
-
+import { Image } from "@/models/item";
 
 export interface AdminType {
-  email: any;
   _id: string; // If you're using MongoDB, _id will be of type ObjectId but you can use string in most cases
   username: string;
   password?: string;
@@ -34,8 +33,8 @@ export type UserType = {
   _id: string;
   username: string;
   email: string;
-  name: string;
-  createdAt: string; // Or Date, depending on your setup
+  createdAt: string;
+  updatedAt: string;
 };
 
 export interface ActionResult {
@@ -44,22 +43,18 @@ export interface ActionResult {
 }
 
 export interface ItemType {
-  images: any;
-  images: boolean;
+  images: Image[];
  
   _id: string;
   itemTitle: string;
   itemDescription: string;
   subcategoryKey: string;
   categoryKey: string;
-  image?: string;
-  imageUrl?: string; 
+ 
   userId: Types.ObjectId; 
   createdAt: Date;
   updatedAt: Date;
-  timeStamp: string;
   createdBy: UserType;
- 
 }
 
 

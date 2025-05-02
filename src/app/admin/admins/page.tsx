@@ -35,7 +35,7 @@ export default async function AdminDashboardPage() {
           <LogoutButton />
         </div>
       </div>
-      <AdminTable admins={admins} currentAdminId={session._id.toString()} />
+      <AdminTable admins={admins} currentAdminId={session?._id || ""} />
     </div>
   );
 }

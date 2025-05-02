@@ -1,5 +1,5 @@
-// src/app/.admin/categories/components/CategoryTable.tsx
-"use client";
+
+
 
 import React from "react";
 import { CategoryType } from "../../../../types";

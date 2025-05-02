@@ -1,5 +1,4 @@
-// src/app/.admin/dashboard/components/AdminTable.tsx
-"use client";
+
 
 import React from "react";
 import AdminRow from "./AdminRow";
