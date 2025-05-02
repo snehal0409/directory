@@ -29,6 +29,18 @@ export default function AdminNav() {
         Subcategories
       </Link>
       <Link
+        className={clsx(pathname === '/admin/users' && 'font-bold')}
+        href="/admin/users"
+      >
+        Users
+      </Link>
+      <Link
+        className={clsx(pathname === '/admin/' && 'font-bold')}
+        href="/user/listings"
+      >
+        Items
+      </Link>
+      <Link
         className={clsx(pathname === '/admin/profile' && 'font-bold')}
         href="/admin/profile"
       >

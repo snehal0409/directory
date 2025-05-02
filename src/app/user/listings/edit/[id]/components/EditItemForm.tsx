@@ -1,11 +1,11 @@
 'use client';
 
-import {  useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { updateItem } from '../actions';
 
-type Image = {
+type ImageType = {
   url: string;
   thumb: string;
 };
@@ -16,7 +16,7 @@ type EditItemFormProps = {
     itemTitle: string;
     itemDescription: string;
     subCategoryKey: string;
-    images: Image[];
+    images: ImageType[];
   };
   selectedCategoryKey: string;
   categories: { categoryKey: string; categoryName: string }[];
@@ -34,10 +34,10 @@ const EditItemForm = ({
   const [itemTitle, setItemTitle] = useState(item.itemTitle);
   const [itemDescription, setItemDescription] = useState(item.itemDescription);
   const [subCategoryKey, setSubCategoryKey] = useState(item.subCategoryKey);
-  const [existingImages, setExistingImages] = useState<Image[]>(item.images);
+  const [existingImages, setExistingImages] = useState<ImageType[]>(item.images);
   const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
   const [, setMainImage] = useState<string>(existingImages[0]?.url || '');
-  const [previewImage, setPreviewImage] = useState<string | null>(null); // modal preview
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -72,7 +72,7 @@ const EditItemForm = ({
 
   const handleThumbnailClick = (imageUrl: string) => {
     setMainImage(imageUrl);
-    setPreviewImage(imageUrl); // open modal
+    setPreviewImage(imageUrl);
   };
 
   return (
@@ -138,7 +138,9 @@ const EditItemForm = ({
               <div key={index} className="relative inline-block">
                 <Image
                   src={`/uploads/thumbnails/${img.thumb}`}
-                  className="w-24 h-24 object-cover cursor-pointer"
+                  width={96}
+                  height={96}
+                  className="object-cover cursor-pointer rounded"
                   alt={`Gallery image ${index + 1}`}
                   onClick={() => handleThumbnailClick(`/uploads/${img.url}`)}
                 />
@@ -169,7 +171,9 @@ const EditItemForm = ({
               <div key={index} className="relative">
                 <Image
                   src={URL.createObjectURL(file)}
-                  className="w-24 h-24 object-cover rounded"
+                  width={96}
+                  height={96}
+                  className="object-cover rounded"
                   alt={`New upload ${index + 1}`}
                   onClick={() => setPreviewImage(URL.createObjectURL(file))}
                 />
@@ -199,14 +203,9 @@ const EditItemForm = ({
         </div>
       </form>
 
-      {/* Image Preview Modal */}
       {previewImage && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
-        >
-          <div
-            className="bg-white p-4 rounded relative max-w-3xl w-full"
-          >
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded relative max-w-3xl w-full">
             <button
               onClick={() => setPreviewImage(null)}
               className="absolute top-2 right-2 text-black text-xl font-bold"
@@ -216,6 +215,8 @@ const EditItemForm = ({
             <Image
               src={previewImage}
               alt="Preview"
+              width={800}
+              height={600}
               className="w-full max-h-[80vh] object-contain"
             />
           </div>

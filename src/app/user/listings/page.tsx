@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { session } from '@/app/actions/auth';
 import { getItemsWithCategories } from './actions';
 import DeleteButton from './components/DeleteButton';
-import { Image as ImageType } from '@/models/item'
+import { Image as ImageType } from '@/models/item';
 import Image from 'next/image';
 
 interface Item {
@@ -43,34 +43,25 @@ export default async function ListingsPage() {
           <table className="min-w-full text-sm text-left bg-white border border-gray-200">
             <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
               <tr>
-                <th className="px-4 py-3 border">Title</th>
-                <th className="px-4 py-3 border">Category</th>
-                <th className="px-4 py-3 border">Subcategory</th>
-                <th className="px-4 py-3 border">Description</th>
-                <th className="px-4 py-3 border">Image</th> {/* New column for image */}
-                <th className="px-4 py-3 border text-center">Actions</th>
+                <th className="px-4 py-3 border">Title</th><th className="px-4 py-3 border">Category</th><th className="px-4 py-3 border">Subcategory</th><th className="px-4 py-3 border">Description</th><th className="px-4 py-3 border">Image</th><th className="px-4 py-3 border text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
               {items.map(({ _id, itemTitle, categoryName, subcategoryName, itemDescription, images }: Item) => (
                 <tr key={_id} className="hover:bg-gray-50 transition">
-                  <td className="px-4 py-3 border font-medium text-gray-900">{itemTitle}</td>
-                  <td className="px-4 py-3 border text-gray-700">{categoryName}</td>
-                  <td className="px-4 py-3 border text-gray-700">{subcategoryName}</td>
-                  <td className="px-4 py-3 border text-gray-600">{itemDescription}</td>
-                  <td className="px-4 py-3 border text-center">
-                    {/* Display the image thumbnail if exists */}
+                  <td className="px-4 py-3 border font-medium text-gray-900">{itemTitle}</td><td className="px-4 py-3 border text-gray-700">{categoryName}</td><td className="px-4 py-3 border text-gray-700">{subcategoryName}</td><td className="px-4 py-3 border text-gray-600">{itemDescription}</td><td className="px-4 py-3 border text-center">
                     {images?.length > 0 && images[0]?.thumb ? (
-
                       <Image
-                        src={`/uploads/thumbnails/${images?.[0].thumb}`}                         alt="Listing"
-                        className="w-16 h-16 object-cover rounded"
+                        src={`/uploads/thumbnails/${images[0].thumb}`}
+                        alt="Listing"
+                        width={64}
+                        height={64}
+                        className="object-cover rounded"
                       />
                     ) : (
                       <span className="text-gray-500">No image</span>
                     )}
-                  </td>
-                  <td className="px-4 py-3 border text-center">
+                  </td><td className="px-4 py-3 border text-center">
                     <div className="flex justify-center gap-4">
                       <Link
                         href={`/user/listings/edit/${_id}`}

@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -23,10 +23,10 @@ type Props = {
 export default function AddItemForm({ categories, subcategories }: Props) {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategory[]>([]);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);  // State for multiple image files
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);  // State for image previews
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [error, setError] = useState('');
-  const [selectedImage, setSelectedImage] = useState<string | null>(null); // State for the selected image in lightbox
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     setFilteredSubcategories(
@@ -38,10 +38,10 @@ export default function AddItemForm({ categories, subcategories }: Props) {
     const files = event.target.files;
     if (files) {
       const newFiles = Array.from(files);
-      setImageFiles(prevFiles => [...prevFiles, ...newFiles]);  // Add new files to the state
+      setImageFiles(prevFiles => [...prevFiles, ...newFiles]);
 
       const previewUrls = newFiles.map(file => URL.createObjectURL(file));
-      setImagePreviews(prevPreviews => [...prevPreviews, ...previewUrls]);  // Set preview URLs for each new image
+      setImagePreviews(prevPreviews => [...prevPreviews, ...previewUrls]);
     }
   };
 
@@ -71,17 +71,15 @@ export default function AddItemForm({ categories, subcategories }: Props) {
     };
 
     console.log(data);
-
-    // Call the backend action to handle the data submission
     await addItem(data);
   };
 
   const openLightbox = (image: string) => {
-    setSelectedImage(image);  // Set the clicked image as the selected one for the lightbox
+    setSelectedImage(image);
   };
 
   const closeLightbox = () => {
-    setSelectedImage(null);  // Close the lightbox
+    setSelectedImage(null);
   };
 
   return (
@@ -157,18 +155,20 @@ export default function AddItemForm({ categories, subcategories }: Props) {
           type="file"
           name="file"
           accept="image/*"
-          multiple  // Allow multiple images
+          multiple
           onChange={handleFileChange}
           className="w-full border p-2 rounded"
         />
-        <div className="mt-4">
+        <div className="mt-4 flex flex-wrap gap-2">
           {imagePreviews.map((preview, index) => (
-            <div key={index} className="relative inline-block mr-2">
-              <Image  
+            <div key={index} className="relative inline-block">
+              <Image
                 src={preview}
                 alt={`Preview ${index}`}
-                className="w-32 h-32 object-cover cursor-pointer"
-                onClick={() => openLightbox(preview)} // Open lightbox on image click
+                width={128}
+                height={128}
+                className="object-cover cursor-pointer rounded"
+                onClick={() => openLightbox(preview)}
               />
               <button
                 type="button"
@@ -195,7 +195,7 @@ export default function AddItemForm({ categories, subcategories }: Props) {
       {/* Lightbox Modal */}
       {selectedImage && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="relative bg-white p-4">
+          <div className="relative bg-white p-4 rounded shadow-lg">
             <button
               type="button"
               onClick={closeLightbox}
@@ -206,6 +206,8 @@ export default function AddItemForm({ categories, subcategories }: Props) {
             <Image
               src={selectedImage}
               alt="Lightbox"
+              width={800}
+              height={600}
               className="max-w-full max-h-[80vh] object-contain"
             />
           </div>

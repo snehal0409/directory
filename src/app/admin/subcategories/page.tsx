@@ -18,6 +18,7 @@ export default async function SubcategoryPage() {
         <Link href="/admin/dashboard" className="text-black-600 hover:underline">Dashboard</Link>
         <Link href="/admin/categories" className="text-black-600 hover:underline">Categories</Link>
         <Link href="/admin/subcategories" className="text-black-800 font-semibold underline">Subcategories</Link>
+        <Link href="/admin/users" className="text-black-600 hover:underline">Users</Link>
         <Link href="/admin/profile" className="text-black-600 hover:underline">Profile</Link>
       </nav>
 

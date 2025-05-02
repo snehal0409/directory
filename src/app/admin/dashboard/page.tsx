@@ -63,7 +63,14 @@ export default async function AdminDashboardPage() {
           <h2 className="text-xl font-semibold">My Profile</h2>
           <p className="text-sm text-gray-500">Edit your admin account</p>
         </Link>
-
+{/* Admin Items Link */}
+<Link
+          href="/admin/items"
+          className="block bg-white p-4 rounded-xl shadow hover:bg-gray-50"
+        >
+          <h2 className="text-xl font-semibold">Manage Items</h2>
+          <p className="text-sm text-gray-500">Edit your admin account</p>
+        </Link>
         {/* Manage Users Link */}
         <Link
           href="/admin/users"
