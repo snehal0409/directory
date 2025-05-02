@@ -5,14 +5,12 @@ import moment from "moment";
 import Image from "next/image"; // Import Image component
 
 type SubcategoryPageProps = {
-  params: {
-    key: string;
-    subCategoryKey: string;
-  };
+  params:  Promise<{key: string; subCategoryKey: string}>;
+ 
 };
 
-export default async function SubcategoryPage({ params }: SubcategoryPageProps) {
-  const { key, subCategoryKey } = params;
+export default async function SubcategoryPage({ params }:  SubcategoryPageProps) {
+  const  { key, subCategoryKey } =await params;
 
   const items: ItemType[] = await getItemsForSubcategory(subCategoryKey);
 

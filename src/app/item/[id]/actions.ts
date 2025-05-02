@@ -2,8 +2,6 @@
 
 import { connectDB } from '@/lib/mongodb';
 import Item from '@/models/item';
-import Category from '@/models/category';
-import { Subcategory } from '@/models/subcategory';
 import mongoose from 'mongoose';
 
 export async function getItemById(id: string) {
@@ -52,7 +50,7 @@ export async function getItemById(id: string) {
         createdAt: 1,
         images: 1,
         subcategoryName: '$subcat.subcategoryName',
-        subcategoryKey: '$subcat.subcategoryKey', // fixed: typo in your code
+        subcategoryKey: '$subcat.subcategoryKey',
         categoryName: '$cat.categoryName',
         categoryKey: '$cat.categoryKey',
         createdBy: {
@@ -63,5 +61,21 @@ export async function getItemById(id: string) {
     },
   ]);
 
-  return result ? result[0] : null;
+  const item = result?.[0];
+  if (!item) return null;
+
+  return {
+    ...item,
+    _id: id,
+    createdAt: item.createdAt instanceof Date ? item.createdAt.toISOString() : item.createdAt,
+    categoryKey: item.categoryKey?.toString?.() ?? item.categoryKey,
+    subcategoryKey: item.subcategoryKey?.toString?.() ?? item.subcategoryKey,
+    createdBy: {
+      _id: item.createdBy?._id?.toString?.() ?? '',
+      username: item.createdBy?.username ?? 'Unknown',
+    },
+    images: Array.isArray(item.images)
+      ? item.images.map((image: { url: string }) => ({ url: image.url }))
+      : [],
+  };
 }

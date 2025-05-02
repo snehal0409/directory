@@ -10,7 +10,7 @@ import EditItemForm from './components/EditItemForm';
 import { session } from '@/app/actions/auth';
 
 type Props = {
-  params: { id: string };
+  params: Promise< { id: string }>;
 };
 
 export default async function EditItemPage({ params }: Props) {
@@ -18,7 +18,7 @@ export default async function EditItemPage({ params }: Props) {
   if (!user) redirect('/login');
 
   await dbConnect();
-  const { id } = params;
+  const { id } = await params;
 
   const item = (await Item.findOne({ _id: id, userId: user.id }).lean()) as LeanItem | null;
   if (!item) redirect('/dashboard/listings');

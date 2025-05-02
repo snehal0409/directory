@@ -5,13 +5,14 @@ import moment from "moment"; // Import moment for date formatting
 import Image from "next/image"; // Import Image component for displaying images
 
 interface Props {
-  params: {
+  params: Promise <{
     key: string;
-  };
+  }>;
 }
 
 export default async function CategoryPage({ params }: Props) {
-  const data = await getCategoryData(params.key);
+  const { key } = await params; // Await the params to get the key
+  const data = await getCategoryData( key);
 
   if (!data || !data.category) {
     return (
@@ -58,7 +59,7 @@ export default async function CategoryPage({ params }: Props) {
                 {subcategories.map((sub) => (
                   <Link
                     key={sub._id}
-                    href={`/category/${params.key}/subcategory/${sub.subcategoryKey}`}
+                    href={`/category/${key}/subcategory/${sub.subcategoryKey}`}
                     className="text-base px-4 py-2 rounded-lg font-bold bg-gradient-to-r from-blue-100 to-blue-200 dark:from-zinc-700 dark:to-zinc-800 text-black hover:scale-105 transition-transform duration-300"
                   >
                     {sub.subcategoryName}

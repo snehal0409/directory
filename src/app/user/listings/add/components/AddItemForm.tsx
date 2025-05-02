@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { addItem } from '../actions'; 
-
+import { addItem } from '../actions';
 
 type Category = {
   categoryKey: string;
@@ -23,10 +22,10 @@ type Props = {
 export default function AddItemForm({ categories, subcategories }: Props) {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategory[]>([]);
-  const [imageFile, setImageFile] = useState<string | null>(null); // State for the image file
-  const [imagePreview, setImagePreview] = useState<string | null>(null); // State for the image preview
+  const [imageFiles, setImageFiles] = useState<File[]>([]);  // State for multiple image files
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);  // State for image previews
   const [error, setError] = useState('');
-  
+  const [selectedImage, setSelectedImage] = useState<string | null>(null); // State for the selected image in lightbox
 
   useEffect(() => {
     setFilteredSubcategories(
@@ -35,51 +34,57 @@ export default function AddItemForm({ categories, subcategories }: Props) {
   }, [selectedCategory, subcategories]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files);
+      setImageFiles(prevFiles => [...prevFiles, ...newFiles]);  // Add new files to the state
 
-      // Create a preview URL for the selected image
-      const previewUrl = URL.createObjectURL(file);
-      setImagePreview(previewUrl);
-
-      const reader = new FileReader()
-
-      reader.onload = (e: any) => {
-        setImageFile(e.target.result);
-      }
-
-      reader.readAsDataURL(file)
+      const previewUrls = newFiles.map(file => URL.createObjectURL(file));
+      setImagePreviews(prevPreviews => [...prevPreviews, ...previewUrls]);  // Set preview URLs for each new image
     }
   };
 
-  const handleSubmit = async (formData: FormData) => {
-      const subcategoryKey = formData.get('subcategoryKey') as string;
-      const itemTitle = formData.get('itemTitle') as string;
-      const itemDescription = formData.get('itemDescription') as string;
+  const handleRemoveImage = (index: number) => {
+    setImageFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+    setImagePreviews(prevPreviews => prevPreviews.filter((_, i) => i !== index));
+  };
 
-      if(!subcategoryKey || !itemTitle || !itemDescription) {
-        setError('Required fields are empty')
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
 
-        return
-      }
-      
-      const data = {
-        subcategoryKey,
-        itemTitle,
-        itemDescription,
-        imageFile: imageFile??'',
-      }
+    const formData = new FormData(event.target as HTMLFormElement);
+    const subcategoryKey = formData.get('subcategoryKey') as string;
+    const itemTitle = formData.get('itemTitle') as string;
+    const itemDescription = formData.get('itemDescription') as string;
 
-      console.log(data)
-
-      addItem(data)
+    if (!subcategoryKey || !itemTitle || !itemDescription || imageFiles.length === 0) {
+      setError('All fields and at least one image are required');
+      return;
     }
 
+    const data = {
+      subcategoryKey,
+      itemTitle,
+      itemDescription,
+      images: imageFiles,
+    };
 
+    console.log(data);
+
+    // Call the backend action to handle the data submission
+    await addItem(data);
+  };
+
+  const openLightbox = (image: string) => {
+    setSelectedImage(image);  // Set the clicked image as the selected one for the lightbox
+  };
+
+  const closeLightbox = () => {
+    setSelectedImage(null);  // Close the lightbox
+  };
 
   return (
-    
-    <form action={handleSubmit} method="POST" encType="multipart/form-data" className="space-y-4">
+    <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
       {/* Category Selection */}
       <div>
         <label htmlFor="category" className="block mb-1">Category</label>
@@ -89,7 +94,6 @@ export default function AddItemForm({ categories, subcategories }: Props) {
           value={selectedCategory}
           onChange={e => setSelectedCategory(e.target.value)}
           className="w-full border p-2 rounded"
-          title="Select a category"
         >
           <option value="">Select category</option>
           {categories.map(cat => (
@@ -108,7 +112,6 @@ export default function AddItemForm({ categories, subcategories }: Props) {
           name="subcategoryKey"
           required
           className="w-full border p-2 rounded"
-          title="Select a subcategory"
         >
           <option value="">Select subcategory</option>
           {filteredSubcategories.map(sub => (
@@ -127,7 +130,6 @@ export default function AddItemForm({ categories, subcategories }: Props) {
           type="text"
           name="itemTitle"
           placeholder="Enter item title"
-          title="Title of the item"
           required
           className="w-full border p-2 rounded"
         />
@@ -140,7 +142,6 @@ export default function AddItemForm({ categories, subcategories }: Props) {
           id="itemDescription"
           name="itemDescription"
           placeholder="Enter a detailed description"
-          title="Item description"
           required
           rows={4}
           className="w-full border p-2 rounded"
@@ -149,16 +150,35 @@ export default function AddItemForm({ categories, subcategories }: Props) {
 
       {/* Image Upload */}
       <div>
-        <label htmlFor="image" className="block mb-1">Upload Image</label>
+        <label htmlFor="image" className="block mb-1">Upload Images</label>
         <input
           id="image"
           type="file"
-          name="file" // Match the server-side formData key
+          name="file"
           accept="image/*"
-          onChange={handleFileChange} // Handle file input change
+          multiple  // Allow multiple images
+          onChange={handleFileChange}
           className="w-full border p-2 rounded"
         />
-        {imagePreview && <img src={imagePreview} alt="Image Preview" className="mt-2 w-32" />}
+        <div className="mt-4">
+          {imagePreviews.map((preview, index) => (
+            <div key={index} className="relative inline-block mr-2">
+              <img
+                src={preview}
+                alt={`Image Preview ${index}`}
+                className="w-32 h-32 object-cover cursor-pointer"
+                onClick={() => openLightbox(preview)} // Open lightbox on image click
+              />
+              <button
+                type="button"
+                onClick={() => handleRemoveImage(index)}
+                className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Submit Button */}
@@ -171,6 +191,25 @@ export default function AddItemForm({ categories, subcategories }: Props) {
 
       {error && <p className="text-red-500 mb-4 text-sm text-center">{error}</p>}
 
+      {/* Lightbox Modal */}
+      {selectedImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="relative bg-white p-4">
+            <button
+              type="button"
+              onClick={closeLightbox}
+              className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+            >
+              ×
+            </button>
+            <img
+              src={selectedImage}
+              alt="Lightbox"
+              className="max-w-full max-h-[80vh] object-contain"
+            />
+          </div>
+        </div>
+      )}
     </form>
   );
 }

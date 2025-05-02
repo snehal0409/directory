@@ -8,7 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
 
-// Define the image upload path
+// Define the image upload paths
 const UPLOAD_DIR = path.join(process.cwd(), 'public/uploads');
 const THUMBNAIL_DIR = path.join(process.cwd(), 'public/uploads/thumbnails');
 
@@ -17,57 +17,52 @@ if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 if (!fs.existsSync(THUMBNAIL_DIR)) fs.mkdirSync(THUMBNAIL_DIR, { recursive: true });
 
 type ItemForm = {
-  subcategoryKey: string,
-  itemTitle: string,
-  itemDescription: string,
-  imageFile: string,
-}
+  subcategoryKey: string;
+  itemTitle: string;
+  itemDescription: string;
+  images: File[];
+};
 
-export async function addItem({
-  subcategoryKey,
-  itemTitle,
-  itemDescription,
-  imageFile,
-}: ItemForm) {
+export async function addItem({ subcategoryKey, itemTitle, itemDescription, images }: ItemForm) {
   const user = await session();
   if (!user) redirect('/login');
 
-  
-  const fileName = `${Date.now()}-${Math.random()}.jpg`;
-  const filePath = path.join(UPLOAD_DIR, fileName);
-  const thumbnailName = `thumb-${fileName}`;
-  const thumbnailPath = path.join(THUMBNAIL_DIR, thumbnailName);
-
-
-  const base64Data = imageFile.replace(/^data:image\/\w+;base64,/, '');
-
-  // Create a buffer from the base64 string
-  const buffer = Buffer.from(base64Data, 'base64');
-
-  // Write the buffer to a file
-  await fs.writeFileSync(filePath, buffer)
-
-
-  // Create a thumbnail using sharpitle
-  await sharp(filePath)
-    .resize(150, 150) // Resize for thumbnail
-    .toFile(thumbnailPath);
-
-
-  // Save the item with the file and thumbnail name in the database
   await dbConnect();
 
-  const images = [{
-    thumb: thumbnailName,
-    url: fileName,
-  }]
+  // Prepare the images array to store in the database
+  const imageUrls = [];
 
+  // Process each image
+  for (const image of images) {
+    const fileName = `${Date.now()}-${Math.random()}.jpg`;
+    const filePath = path.join(UPLOAD_DIR, fileName);
+    const thumbnailName = `thumb-${fileName}`;
+    const thumbnailPath = path.join(THUMBNAIL_DIR, thumbnailName);
+
+    const buffer = await image.arrayBuffer();
+    const imageBuffer = Buffer.from(buffer);
+
+    // Save the image to the upload directory
+    await fs.promises.writeFile(filePath, imageBuffer);
+
+    // Create a thumbnail using sharp
+    await sharp(filePath)
+      .resize(150, 150)
+      .toFile(thumbnailPath);
+
+    imageUrls.push({
+      thumb: thumbnailName,
+      url: fileName,
+    });
+  }
+
+  // Create the item in the database with multiple images
   await Item.create({
     userId: user.userId,
     subcategoryKey,
     itemTitle,
     itemDescription,
-    images,
+    images: imageUrls,
   });
 
   // Redirect after success
