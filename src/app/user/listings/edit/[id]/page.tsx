@@ -1,8 +1,7 @@
 // src/app/user/listings/edit/[id]/page.tsx
 
 import dbConnect from '@/lib/mongodb';
-import { Subcategory } from '@/models/subcategory';
-import Category from '@/models/category';
+
 import { redirect } from 'next/navigation';
 import {EditItemForm} from './components/EditItemForm';
 import { session } from '@/app/actions/auth';

@@ -2,7 +2,7 @@
 import AdminHeadingLink from './components/AdminHeadingLink';
 import Link from 'next/link';
 import { deleteItem, getItemsWithCategories } from './actions';
-
+import Image from 'next/image';
 export default async function ItemsPage() {
   const items = await getItemsWithCategories();
 
@@ -31,7 +31,7 @@ export default async function ItemsPage() {
               <td className="p-2">
                 {/* Check if item.images is an object or an array and render accordingly */}
                 {item.images && item.images.length > 0 ? (
-                  <img src={`/uploads/thumbnails/${item.images[0].thumb}`} alt={item.itemTitle} className="w-16 h-16" />
+                  <Image src={`/uploads/thumbnails/${item.images[0].thumb}`} alt={item.itemTitle} className="w-16 h-16" />
                 ) : (
                   "No Image"
                 )}
