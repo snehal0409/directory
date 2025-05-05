@@ -6,7 +6,8 @@ import Image from 'next/image';
 type Props = {
   item: {
     itemTitle: string;
-    images: { url: string }[];
+    images: { url: string, thumb: string }[];
+    
   };
 };
 
@@ -46,7 +47,7 @@ export default function LightboxGallery({ item }: Props) {
               className="relative w-32 h-20 flex-shrink-0 rounded-md overflow-hidden border border-gray-300 dark:border-zinc-700 cursor-pointer"
             >
               <Image
-                src={`/uploads/${img.url}`}
+                src={`/uploads/thumbnails/${img.thumb}`}
                 alt={`Image ${index + 2}`}
                 layout="fill"
                 objectFit="cover"

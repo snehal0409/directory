@@ -16,27 +16,26 @@ type EditItemFormProps = {
     itemTitle: string;
     itemDescription: string;
     subCategoryKey: string;
+    categoryKey: string;
     images: ImageType[];
   };
-  selectedCategoryKey: string;
   categories: { categoryKey: string; categoryName: string }[];
   subcategories: { subcategoryKey: string; subcategoryName: string }[];
 };
 
 export const EditItemForm = ({
   item,
-  selectedCategoryKey,
   categories,
   subcategories,
 }: EditItemFormProps) => {
   const router = useRouter();
+  console.log(item, 'item');
 
   const [itemTitle, setItemTitle] = useState(item.itemTitle);
   const [itemDescription, setItemDescription] = useState(item.itemDescription);
   const [subCategoryKey, setSubCategoryKey] = useState(item.subCategoryKey);
   const [existingImages, setExistingImages] = useState<ImageType[]>(item.images);
   const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
-  const [, setMainImage] = useState<string>(existingImages[0]?.url || '');
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,7 +70,6 @@ export const EditItemForm = ({
   };
 
   const handleThumbnailClick = (imageUrl: string) => {
-    setMainImage(imageUrl);
     setPreviewImage(imageUrl);
   };
 
@@ -103,7 +101,7 @@ export const EditItemForm = ({
           <label htmlFor="categorySelect" className="block mb-1">Category</label>
           <select
             id="categorySelect"
-            value={selectedCategoryKey}
+            value={item.categoryKey}
             disabled
             className="w-full border p-2 rounded bg-gray-100"
           >

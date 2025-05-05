@@ -7,6 +7,8 @@ import { session } from '@/app/actions/auth';
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
+import { Subcategory, ISubcategory } from '@/models/subcategory';
+import Category, { ICategory } from '@/models/category';
 
 // Define the image upload paths
 const UPLOAD_DIR = path.join(process.cwd(), 'public/uploads');
@@ -67,4 +69,28 @@ export async function addItem({ subcategoryKey, itemTitle, itemDescription, imag
 
   // Redirect after success
   redirect('/user/listings');
+}
+
+export async function getAllCategories() {
+  await dbConnect();
+  
+  return Category.find({})
+    .then((categories) => {
+      return categories.map((category: ICategory) => ({
+        categoryKey: category.categoryKey,
+        categoryName: category.categoryName,
+      }));
+    });
+}
+
+export async function getAllSubCategories() {
+  await dbConnect();
+
+  return Subcategory.find({}).then((subcategories) => {
+    return subcategories.map((subcategory: ISubcategory) => ({
+      subcategoryKey: subcategory.subcategoryKey,
+      subcategoryName: subcategory.subcategoryName,
+      subcategoryParent: subcategory.subcategoryParent,
+    }));
+  });
 }

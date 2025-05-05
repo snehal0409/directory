@@ -75,7 +75,7 @@ export async function getItemById(id: string) {
       username: item.createdBy?.username ?? 'Unknown',
     },
     images: Array.isArray(item.images)
-      ? item.images.map((image: { url: string }) => ({ url: image.url }))
+      ? item.images.map((image: { url: string, thumb: string }) => ({ url: image.url, thumb: image.thumb }))
       : [],
   };
 }
