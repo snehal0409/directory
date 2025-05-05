@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { Image } from "@/models/item";
 
+
 export interface AdminType {
   _id: string; // If you're using MongoDB, _id will be of type ObjectId but you can use string in most cases
   username: string;
@@ -43,6 +44,10 @@ export interface ActionResult {
 }
 
 export interface ItemType {
+  subcategory: any;
+  category: any;
+  title: any;
+  description: any;
   images: Image[];
  
   _id: string;

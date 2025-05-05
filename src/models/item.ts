@@ -9,7 +9,7 @@ export interface ItemDocument extends Document {
   itemTitle: string;
   itemDescription: string;
   subcategoryKey: string;
-  userId: string;
+  userId?: string;
   images: Image[];
 }
 
@@ -18,7 +18,7 @@ export interface LeanItem {
   itemTitle: string;
   itemDescription: string;
   subcategoryKey: string;
-  userId: Types.ObjectId;
+  userId?: string;
   images: Image[];
 }
 
@@ -36,7 +36,7 @@ const ItemSchema = new Schema<ItemDocument>(
     itemTitle: { type: String, required: true },
     itemDescription: { type: String, required: true },
     subcategoryKey: { type: String, required: true },
-    userId: { type: String, required: true },
+    userId: { type: String, required: false },
     images: { type: [ImageSchema], default: []},
     
   },

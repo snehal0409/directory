@@ -34,9 +34,8 @@ export const EditItemForm = ({
   const [itemTitle, setItemTitle] = useState(item.itemTitle);
   const [itemDescription, setItemDescription] = useState(item.itemDescription);
   const [subCategoryKey, setSubCategoryKey] = useState(item.subCategoryKey);
-  const [existingImages, setExistingImages] = useState<ImageType[]>(item.images);
+  const [existingImages, setExistingImages] = useState<ImageType[]>(item.images??[]);
   const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
-  const [, setMainImage] = useState<string>(existingImages[0]?.url || '');
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +56,6 @@ export const EditItemForm = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     await updateItem({
       _id: item._id,
       itemTitle,
@@ -66,12 +64,10 @@ export const EditItemForm = ({
       existingImages,
       newImages: newImageFiles,
     });
-
-    router.push('/user/listings');
+    router.push('/admin/items');
   };
 
   const handleThumbnailClick = (imageUrl: string) => {
-    setMainImage(imageUrl);
     setPreviewImage(imageUrl);
   };
 
@@ -132,7 +128,7 @@ export const EditItemForm = ({
         </div>
 
         <div>
-          <h2 className="block mb-1">Image Gallery</h2>
+          <h2 className="block mb-1">Existing Images</h2>
           <div className="flex flex-wrap gap-2">
             {existingImages.map((img, index) => (
               <div key={index} className="relative inline-block">
@@ -141,7 +137,7 @@ export const EditItemForm = ({
                   width={96}
                   height={96}
                   className="object-cover cursor-pointer rounded"
-                  alt={`Gallery image ${index + 1}`}
+                  alt={`Image ${index + 1}`}
                   onClick={() => handleThumbnailClick(`/uploads/${img.url}`)}
                 />
                 <button
@@ -157,7 +153,7 @@ export const EditItemForm = ({
         </div>
 
         <div>
-          <label htmlFor="newImages" className="block mb-1">Add More Images</label>
+          <label htmlFor="newImages" className="block mb-1">Add New Images</label>
           <input
             id="newImages"
             type="file"
@@ -167,25 +163,28 @@ export const EditItemForm = ({
             className="w-full border p-2 rounded"
           />
           <div className="flex gap-2 mt-2 flex-wrap">
-            {newImageFiles.map((file, index) => (
-              <div key={index} className="relative">
-                <Image
-                  src={URL.createObjectURL(file)}
-                  width={96}
-                  height={96}
-                  className="object-cover rounded"
-                  alt={`New upload ${index + 1}`}
-                  onClick={() => setPreviewImage(URL.createObjectURL(file))}
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveNewImage(index)}
-                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
+            {newImageFiles.map((file, index) => {
+              const previewUrl = URL.createObjectURL(file);
+              return (
+                <div key={index} className="relative">
+                  <Image
+                    src={previewUrl}
+                    width={96}
+                    height={96}
+                    className="object-cover rounded"
+                    alt={`New image ${index + 1}`}
+                    onClick={() => setPreviewImage(previewUrl)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveNewImage(index)}
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                  >
+                    ×
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -225,4 +224,3 @@ export const EditItemForm = ({
     </>
   );
 };
-

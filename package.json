@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint:fix": "next lint --fix"  
+    "lint:fix": "next lint --fix"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -24,7 +24,8 @@
     "path": "^0.12.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "sharp": "^0.34.1"
+    "sharp": "^0.34.1",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -38,6 +39,7 @@
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19",
     "@types/sharp": "^0.31.1",
+    "@types/uuid": "^10.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.2.4",
     "tailwindcss": "^4",

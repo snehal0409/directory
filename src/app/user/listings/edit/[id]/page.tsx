@@ -6,7 +6,7 @@ import { LeanItem } from '@/models/item';
 import { Subcategory } from '@/models/subcategory';
 import Category from '@/models/category';
 import { redirect } from 'next/navigation';
-import EditItemForm from './components/EditItemForm';
+import {EditItemForm} from './components/EditItemForm';
 import { session } from '@/app/actions/auth';
 
 type Props = {
