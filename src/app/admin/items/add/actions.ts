@@ -3,6 +3,8 @@
 
 import dbConnect from '@/lib/mongodb';
 import Item from '@/models/item';
+import Category, { ICategory } from '@/models/category';
+import { Subcategory, ISubcategory } from '@/models/subcategory';
 import { getSessionAdmin } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import fs from 'fs';
@@ -58,4 +60,29 @@ export async function addItem({ subcategoryKey, itemTitle, itemDescription, imag
   });
 
   redirect('/admin/items');
+}
+
+
+export async function getAllCategories() {
+  await dbConnect();
+  
+  return Category.find({})
+    .then((categories) => {
+      return categories.map((category: ICategory) => ({
+        categoryKey: category.categoryKey,
+        categoryName: category.categoryName,
+      }));
+    });
+}
+
+export async function getAllSubCategories() {
+  await dbConnect();
+
+  return Subcategory.find({}).then((subcategories) => {
+    return subcategories.map((subcategory: ISubcategory) => ({
+      subcategoryKey: subcategory.subcategoryKey,
+      subcategoryName: subcategory.subcategoryName,
+      subcategoryParent: subcategory.subcategoryParent,
+    }));
+  });
 }

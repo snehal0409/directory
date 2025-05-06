@@ -1,6 +1,6 @@
 // src/app/user/listings/edit/[id]/page.tsx
 
-import dbConnect from '@/lib/mongodb';
+
 
 import { redirect } from 'next/navigation';
 import {EditItemForm} from './components/EditItemForm';
@@ -17,7 +17,6 @@ export default async function EditItemPage({ params }: Props) {
   const user = await session();
   if (!user) redirect('/login');
 
-  await dbConnect();
   const { id } = await params;
 
   const item = await getItemById(id);

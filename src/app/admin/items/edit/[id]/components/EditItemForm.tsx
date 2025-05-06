@@ -1,13 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { updateItem } from '../actions';
 
+
 export type ImageType = {
   url: string;
   thumb: string;
+};
+
+type Subcategory = {
+  subcategoryKey: string;
+  subcategoryName: string;
+  subcategoryParent: string;
 };
 
 type EditItemFormProps = {
@@ -16,16 +23,15 @@ type EditItemFormProps = {
     itemTitle: string;
     itemDescription: string;
     subCategoryKey: string;
+    categoryKey: string;
     images: ImageType[];
   };
-  selectedCategoryKey: string;
   categories: { categoryKey: string; categoryName: string }[];
-  subcategories: { subcategoryKey: string; subcategoryName: string }[];
+  subcategories: Subcategory[];
 };
-
 export const EditItemForm = ({
   item,
-  selectedCategoryKey,
+
   categories,
   subcategories,
 }: EditItemFormProps) => {
@@ -35,8 +41,17 @@ export const EditItemForm = ({
   const [itemDescription, setItemDescription] = useState(item.itemDescription);
   const [subCategoryKey, setSubCategoryKey] = useState(item.subCategoryKey);
   const [existingImages, setExistingImages] = useState<ImageType[]>(item.images??[]);
+  const [selectedCategory, setSelectedCategory] = useState(item.categoryKey);
+    const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategory[]>([]);
   const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+ useEffect(() => {
+    setFilteredSubcategories(
+      subcategories.filter(sub => sub.subcategoryParent === selectedCategory)
+    );
+  }, [selectedCategory, subcategories]);
+
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -99,12 +114,16 @@ export const EditItemForm = ({
           <label htmlFor="categorySelect" className="block mb-1">Category</label>
           <select
             id="categorySelect"
-            value={selectedCategoryKey}
-            disabled
+            value={selectedCategory}
+            onChange={e => 
+              setSelectedCategory(e.target.value)
+          
+            }
             className="w-full border p-2 rounded bg-gray-100"
           >
             {categories.map((cat) => (
               <option key={cat.categoryKey} value={cat.categoryKey}>
+                
                 {cat.categoryName}
               </option>
             ))}
@@ -119,7 +138,7 @@ export const EditItemForm = ({
             onChange={(e) => setSubCategoryKey(e.target.value)}
             className="w-full border p-2 rounded"
           >
-            {subcategories.map((sub) => (
+            {filteredSubcategories.map((sub) => (
               <option key={sub.subcategoryKey} value={sub.subcategoryKey}>
                 {sub.subcategoryName}
               </option>
