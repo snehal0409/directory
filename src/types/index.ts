@@ -49,7 +49,8 @@ export interface ItemType {
   title: any;
   description: any;
   images: Image[];
- 
+  videos: File[];
+
   _id: string;
   itemTitle: string;
   itemDescription: string;

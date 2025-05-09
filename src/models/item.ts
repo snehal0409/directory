@@ -5,12 +5,19 @@ export type Image=  {
   url: string,
 }
 
+export type Video = {
+  file: boolean;
+  thumb: string,
+  url: string,
+}
+
 export interface ItemDocument extends Document {
   itemTitle: string;
   itemDescription: string;
   subcategoryKey: string;
   userId?: string;
   images: Image[];
+  videos: Video[];
 }
 
 export interface LeanItem {
@@ -20,6 +27,7 @@ export interface LeanItem {
   subcategoryKey: string;
   userId?: string;
   images: Image[];
+  videos: Video[]; 
 }
 
 
@@ -31,6 +39,16 @@ const ImageSchema = new Schema<Image>(
   {_id: false},
 )
 
+
+const VideoSchema = new Schema<Video>(
+  {
+    thumb: { type: String, required: true },
+    url: { type: String, required: true },
+  },
+  { _id: false }
+);
+
+
 const ItemSchema = new Schema<ItemDocument>(
   {
     itemTitle: { type: String, required: true },
@@ -38,6 +56,7 @@ const ItemSchema = new Schema<ItemDocument>(
     subcategoryKey: { type: String, required: true },
     userId: { type: String, required: false },
     images: { type: [ImageSchema], default: []},
+    videos: { type: [VideoSchema], default: [] },
     
   },
   { timestamps: true }

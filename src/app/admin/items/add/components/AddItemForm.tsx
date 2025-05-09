@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { addItem } from '../actions';
+import { useRouter } from 'next/navigation';
+import { addItem } from '../video';
 
 type Category = {
   categoryKey: string;
@@ -21,10 +22,13 @@ type Props = {
 };
 
 export default function AddItemForm({ categories, subcategories }: Props) {
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('');
   const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategory[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [videoFiles, setVideoFiles] = useState<File[]>([]); // Allow multiple videos
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
   const [error, setError] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -43,33 +47,57 @@ export default function AddItemForm({ categories, subcategories }: Props) {
     }
   };
 
+
+  const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newFiles = Array.from(files);
+      setVideoFiles(prev => [...prev, ...newFiles]);
+      setVideoPreviews(prev => [...prev, ...newFiles.map(f => URL.createObjectURL(f))]);
+    }
+  };
+
   const handleRemoveImage = (index: number) => {
     setImageFiles(prev => prev.filter((_, i) => i !== index));
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
+  const handleRemoveVideo = (index: number) => {
+    setVideoFiles(prev => prev.filter((_, i) => i !== index));
+    setVideoPreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+  
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+  
+    // Append images and videos manually
+    imageFiles.forEach((file, index) => {
+      formData.append(`images`, file);
+    });
+  
+    videoFiles.forEach((file, index) => {
+      formData.append(`videos`, file);
+    });
 
-    const formData = new FormData(e.target as HTMLFormElement);
-    const subcategoryKey = formData.get('subcategoryKey') as string;
-    const itemTitle = formData.get('itemTitle') as string;
-    const itemDescription = formData.get('itemDescription') as string;
+    formData.append('subcategoryKey', formData.get('subcategoryKey') as string);
+    formData.append('itemTitle', formData.get('itemTitle') as string); 
+    formData.append('itemDescription', formData.get('itemDescription') as string);
 
-    if (!subcategoryKey || !itemTitle || !itemDescription || imageFiles.length === 0) {
-      setError('All fields and at least one image are required');
-      return;
-    }
-
-    const data = {
-      subcategoryKey,
-      itemTitle,
-      itemDescription,
-      images: imageFiles,
-    };
-
-    await addItem(data);
+    await addItem(formData)
+      .then(() => {
+        setError(''); // Clear error on success
+        router.push('/admin/items');
+      })
+      .catch(err => {
+        setError('Failed to add item. Please try again.');
+        console.error(err);
+      });    
+    // router.push('/admin/items'); // Redirect to items page after successful submission
   };
+  
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
@@ -159,6 +187,37 @@ export default function AddItemForm({ categories, subcategories }: Props) {
                 onClick={() => handleRemoveImage(index)}
                 className="absolute top-0 right-0 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center"
                 aria-label={`Remove image ${index + 1}`}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="videoUpload" className="block mb-1">Upload Videos</label>
+        <input
+          id="videoUpload"
+          type="file"
+          accept="video/*"
+          multiple
+          onChange={handleVideoChange}
+          className="w-full border p-2 rounded"
+          title="Choose videos to upload"
+        />
+        <div className="mt-4 flex flex-wrap gap-2">
+          {videoPreviews.map((preview, index) => (
+            <div key={index} className="relative inline-block">
+              <video width={128} height={128} controls className="rounded cursor-pointer">
+                <source src={preview} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              <button
+                type="button"
+                onClick={() => handleRemoveVideo(index)}
+                className="absolute top-0 right-0 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center"
+                aria-label={`Remove video ${index + 1}`}
               >
                 ×
               </button>

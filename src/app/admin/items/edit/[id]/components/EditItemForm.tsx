@@ -5,6 +5,11 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { updateItem } from '../actions';
 
+type VideoType = {
+  url: string;
+  thumb: string;
+};
+
 
 export type ImageType = {
   url: string;
@@ -25,6 +30,7 @@ type EditItemFormProps = {
     subCategoryKey: string;
     categoryKey: string;
     images: ImageType[];
+    videos: VideoType[];
   };
   categories: { categoryKey: string; categoryName: string }[];
   subcategories: Subcategory[];
@@ -41,10 +47,14 @@ export const EditItemForm = ({
   const [itemDescription, setItemDescription] = useState(item.itemDescription);
   const [subCategoryKey, setSubCategoryKey] = useState(item.subCategoryKey);
   const [existingImages, setExistingImages] = useState<ImageType[]>(item.images??[]);
+  const [existingVideos, setExistingVideos] = useState<VideoType[]>(item.videos??[])
   const [selectedCategory, setSelectedCategory] = useState(item.categoryKey);
     const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategory[]>([]);
   const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
+  const [newVideoFiles,setNewVideoFiles]= useState<File[]>([]);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewVideo, setPreviewVideo] = useState<string | null>(null);
+
 
  useEffect(() => {
     setFilteredSubcategories(
@@ -69,6 +79,23 @@ export const EditItemForm = ({
     setExistingImages((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleVideoFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const selected = Array.from(files);
+      setNewVideoFiles((prev) => [...prev, ...selected]);
+    }
+  };
+
+  
+  const handleRemoveNewVideo = (index: number) => {
+    setNewVideoFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveExistingVideo = (index: number) => {
+    setExistingVideos((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await updateItem({
@@ -78,12 +105,18 @@ export const EditItemForm = ({
       subCategoryKey,
       existingImages,
       newImages: newImageFiles,
+      existingVideos,
+      newVideos: newVideoFiles,
     });
     router.push('/admin/items');
   };
 
   const handleThumbnailClick = (imageUrl: string) => {
     setPreviewImage(imageUrl);
+  };
+
+  const handleVideoThumbnailClick = (imageUrl: string) => {
+    setPreviewVideo(imageUrl);
   };
 
   return (
@@ -207,6 +240,68 @@ export const EditItemForm = ({
           </div>
         </div>
 
+        <div>
+          <h2 className="block mb-1">Existing Videos</h2>
+          <div className="flex flex-wrap gap-2">
+            {existingVideos.map((video, index) => (
+              <div key={index} className="relative inline-block">
+                
+                <video width={128} height={128} controls className="rounded cursor-pointer"
+                 onClick={() => handleVideoThumbnailClick(`/uploads/${video.url}`)} >
+                <source src={`/uploads/videos/${video.url}`} type="video/mp4" />
+              
+                Your browser does not support the video tag.
+
+              </video>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveExistingVideo(index)}
+                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="newVideos" className="block mb-1">Add New Videos</label>
+          <input
+            id="newVideos"
+            type="file"
+            accept="video/*"
+            multiple
+            onChange={handleVideoFileChange}
+            className="w-full border p-2 rounded"
+          />
+          <div className="flex gap-2 mt-2 flex-wrap">
+            {newVideoFiles.map((file, index) => {
+              const previewUrl = URL.createObjectURL(file);
+              return (
+                <div key={index} className="relative">
+                  
+                  
+                <video width={128} height={128} controls className="rounded cursor-pointer"
+                 onClick={() => setPreviewVideo(previewUrl)}>
+                <source src={previewUrl} type="video/mp4" />
+                </video>
+
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveNewVideo(index)}
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                  >
+                    ×
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+
+
         <div className="flex justify-between">
           <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
             Save Changes
@@ -237,9 +332,34 @@ export const EditItemForm = ({
               height={600}
               className="w-full max-h-[80vh] object-contain"
             />
+
+        
           </div>
         </div>
       )}
+
+{previewVideo&& (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded relative max-w-3xl w-full">
+            <button
+              onClick={() => setPreviewVideo(null)}
+              className="absolute top-2 right-2 text-black text-xl font-bold"
+            >
+              ×
+            </button>
+         
+  
+  <video width={128} height={128} controls className="rounded cursor-pointer"
+                 >
+                <source src={previewVideo} type="video/mp4" />
+                </video>
+
+
+          </div>
+        </div>
+      )}
+
+
     </>
   );
 };
