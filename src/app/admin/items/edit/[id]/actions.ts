@@ -10,9 +10,14 @@ import { getSessionAdmin } from '@/lib/session';
 
 const UPLOAD_DIR = path.join(process.cwd(), 'public/uploads');
 const THUMBNAIL_DIR = path.join(process.cwd(), 'public/uploads/thumbnails');
+const VIDEO_DIR = path.join(process.cwd(), 'public/uploads/videos');
+
 
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 if (!fs.existsSync(THUMBNAIL_DIR)) fs.mkdirSync(THUMBNAIL_DIR, { recursive: true });
+
+if (!fs.existsSync(VIDEO_DIR)) fs.mkdirSync(VIDEO_DIR, { recursive: true });
+
 
 type UpdateItemForm = {
   _id: string;
@@ -20,7 +25,9 @@ type UpdateItemForm = {
   itemDescription: string;
   subCategoryKey: string;
   existingImages: { url: string; thumb: string }[];
+  existingVideos:  { url: string; thumb: string }[];
   newImages: File[];
+  newVideos: File[];
 };
 
 export async function updateItem({
@@ -29,7 +36,9 @@ export async function updateItem({
   itemDescription,
   subCategoryKey,
   existingImages,
+  existingVideos,
   newImages,
+  newVideos,
 }: UpdateItemForm) {
   const user = await getSessionAdmin();
   if (!user) redirect('/admin/login');
@@ -55,12 +64,34 @@ export async function updateItem({
 
   const allImages = [...existingImages, ...newImageRecords];
 
+  const newVideosRecords = [];
+    if (newVideos && newVideos.length > 0) {
+      for (const video of newVideos) {
+        const videoName = `${Date.now()}-${Math.random()}.mp4`;
+        const videoPath = path.join(VIDEO_DIR, videoName);
+  
+        const buffer = await video.arrayBuffer();
+        const videoBuffer = Buffer.from(buffer);
+        await fs.promises.writeFile(videoPath, videoBuffer);
+  
+        newVideosRecords.push({
+          url: videoName,
+          thumb: videoName, 
+        });
+      }
+    }
+    const allVideos = [...existingVideos, ...newVideosRecords];
+  
+
   await Item.findByIdAndUpdate(_id, {
     itemTitle,
     itemDescription,
     subcategoryKey: subCategoryKey,
     images: allImages,
+    videos: allVideos,
   });
+
+
 
   return;
 }

@@ -3,7 +3,14 @@ import Link from 'next/link';
 import { deleteItem, getItemsWithCategories } from './actions';
 import Image from 'next/image';
 
+import { getSessionAdmin } from '@/lib/session';
+import { redirect } from 'next/navigation';
+
+
 export default async function ItemsPage() {
+    const user = await getSessionAdmin();
+    if (!user) redirect('/admin/login');
+
   const items = await getItemsWithCategories();
 
   return (
