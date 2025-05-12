@@ -1,13 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { updateItem } from '../actions';
 
+type VideoType = {
+  url: string;
+  thumb: string;
+};
+
 export type ImageType = {
   url: string;
   thumb: string;
+};
+
+type Subcategory = {
+  subcategoryKey: string;
+  subcategoryName: string;
+  subcategoryParent: string;
 };
 
 type EditItemFormProps = {
@@ -18,9 +29,10 @@ type EditItemFormProps = {
     subCategoryKey: string;
     categoryKey: string;
     images: ImageType[];
+    videos: VideoType[];
   };
   categories: { categoryKey: string; categoryName: string }[];
-  subcategories: { subcategoryKey: string; subcategoryName: string }[];
+  subcategories: Subcategory[];
 };
 
 export const EditItemForm = ({
@@ -29,20 +41,32 @@ export const EditItemForm = ({
   subcategories,
 }: EditItemFormProps) => {
   const router = useRouter();
-  console.log(item, 'item');
 
   const [itemTitle, setItemTitle] = useState(item.itemTitle);
   const [itemDescription, setItemDescription] = useState(item.itemDescription);
   const [subCategoryKey, setSubCategoryKey] = useState(item.subCategoryKey);
-  const [existingImages, setExistingImages] = useState<ImageType[]>(item.images);
-  const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState(item.categoryKey);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      const selected = Array.from(files);
-      setNewImageFiles((prev) => [...prev, ...selected]);
+  const [existingImages, setExistingImages] = useState<ImageType[]>(item.images ?? []);
+  const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
+
+  const [existingVideos, setExistingVideos] = useState<VideoType[]>(item.videos ?? []);
+  const [newVideoFiles, setNewVideoFiles] = useState<File[]>([]);
+
+  const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategory[]>([]);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewVideo, setPreviewVideo] = useState<string | null>(null);
+
+  useEffect(() => {
+    setFilteredSubcategories(
+      subcategories.filter((sub) => sub.subcategoryParent === selectedCategory)
+    );
+  }, [selectedCategory, subcategories]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      setNewImageFiles((prev) => [...prev, ...files]);
     }
   };
 
@@ -54,9 +78,23 @@ export const EditItemForm = ({
     setExistingImages((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      setNewVideoFiles((prev) => [...prev, ...files]);
+    }
+  };
+
+  const handleRemoveNewVideo = (index: number) => {
+    setNewVideoFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveExistingVideo = (index: number) => {
+    setExistingVideos((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     await updateItem({
       _id: item._id,
       itemTitle,
@@ -64,13 +102,18 @@ export const EditItemForm = ({
       subCategoryKey,
       existingImages,
       newImages: newImageFiles,
+      existingVideos,
+      newVideos: newVideoFiles,
     });
-
     router.push('/user/listings');
   };
 
-  const handleThumbnailClick = (imageUrl: string) => {
-    setPreviewImage(imageUrl);
+  const handleThumbnailClick = (url: string) => {
+    setPreviewImage(url);
+  };
+
+  const handleVideoThumbnailClick = (url: string) => {
+    setPreviewVideo(url);
   };
 
   return (
@@ -101,8 +144,8 @@ export const EditItemForm = ({
           <label htmlFor="categorySelect" className="block mb-1">Category</label>
           <select
             id="categorySelect"
-            value={item.categoryKey}
-            disabled
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
             className="w-full border p-2 rounded bg-gray-100"
           >
             {categories.map((cat) => (
@@ -121,7 +164,7 @@ export const EditItemForm = ({
             onChange={(e) => setSubCategoryKey(e.target.value)}
             className="w-full border p-2 rounded"
           >
-            {subcategories.map((sub) => (
+            {filteredSubcategories.map((sub) => (
               <option key={sub.subcategoryKey} value={sub.subcategoryKey}>
                 {sub.subcategoryName}
               </option>
@@ -130,7 +173,7 @@ export const EditItemForm = ({
         </div>
 
         <div>
-          <h2 className="block mb-1">Image Gallery</h2>
+          <h2 className="block mb-1">Existing Images</h2>
           <div className="flex flex-wrap gap-2">
             {existingImages.map((img, index) => (
               <div key={index} className="relative inline-block">
@@ -139,7 +182,7 @@ export const EditItemForm = ({
                   width={96}
                   height={96}
                   className="object-cover cursor-pointer rounded"
-                  alt={`Gallery image ${index + 1}`}
+                  alt={`Image ${index + 1}`}
                   onClick={() => handleThumbnailClick(`/uploads/${img.url}`)}
                 />
                 <button
@@ -155,7 +198,7 @@ export const EditItemForm = ({
         </div>
 
         <div>
-          <label htmlFor="newImages" className="block mb-1">Add More Images</label>
+          <label htmlFor="newImages" className="block mb-1">Add New Images</label>
           <input
             id="newImages"
             type="file"
@@ -165,25 +208,92 @@ export const EditItemForm = ({
             className="w-full border p-2 rounded"
           />
           <div className="flex gap-2 mt-2 flex-wrap">
-            {newImageFiles.map((file, index) => (
-              <div key={index} className="relative">
-                <Image
-                  src={URL.createObjectURL(file)}
-                  width={96}
-                  height={96}
-                  className="object-cover rounded"
-                  alt={`New upload ${index + 1}`}
-                  onClick={() => setPreviewImage(URL.createObjectURL(file))}
-                />
+            {newImageFiles.map((file, index) => {
+              const previewUrl = URL.createObjectURL(file);
+              return (
+                <div key={index} className="relative">
+                  <Image
+                    src={previewUrl}
+                    width={96}
+                    height={96}
+                    className="object-cover rounded"
+                    alt={`New image ${index + 1}`}
+                    onClick={() => setPreviewImage(previewUrl)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveNewImage(index)}
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                  >
+                    ×
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <h2 className="block mb-1">Existing Videos</h2>
+          <div className="flex flex-wrap gap-2">
+            {existingVideos.map((video, index) => (
+              <div key={index} className="relative inline-block">
+                <video
+                  width={128}
+                  height={128}
+                  controls
+                  className="rounded cursor-pointer"
+                  onClick={() => handleVideoThumbnailClick(`/uploads/${video.url}`)}
+                >
+                  <source src={`/uploads/videos/${video.url}`} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
                 <button
                   type="button"
-                  onClick={() => handleRemoveNewImage(index)}
+                  onClick={() => handleRemoveExistingVideo(index)}
                   className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
                 >
                   ×
                 </button>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="newVideos" className="block mb-1">Add New Videos</label>
+          <input
+            id="newVideos"
+            type="file"
+            accept="video/*"
+            multiple
+            onChange={handleVideoFileChange}
+            className="w-full border p-2 rounded"
+          />
+          <div className="flex gap-2 mt-2 flex-wrap">
+            {newVideoFiles.map((file, index) => {
+              const previewUrl = URL.createObjectURL(file);
+              return (
+                <div key={index} className="relative">
+                  <video
+                    width={128}
+                    height={128}
+                    controls
+                    className="rounded cursor-pointer"
+                    onClick={() => setPreviewVideo(previewUrl)}
+                  >
+                    <source src={previewUrl} type="video/mp4" />
+                  </video>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveNewVideo(index)}
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                  >
+                    ×
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -202,25 +312,33 @@ export const EditItemForm = ({
       </form>
 
       {previewImage && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded relative max-w-3xl w-full">
-            <button
-              onClick={() => setPreviewImage(null)}
-              className="absolute top-2 right-2 text-black text-xl font-bold"
-            >
-              ×
-            </button>
-            <Image
-              src={previewImage}
-              alt="Preview"
-              width={800}
-              height={600}
-              className="w-full max-h-[80vh] object-contain"
-            />
-          </div>
+        <div
+          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+          onClick={() => setPreviewImage(null)}
+        >
+          <Image
+            src={previewImage}
+            alt="Preview"
+            width={800}
+            height={800}
+            className="rounded max-h-[90vh] max-w-[90vw] object-contain"
+          />
+        </div>
+      )}
+
+      {previewVideo && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+          onClick={() => setPreviewVideo(null)}
+        >
+          <video
+            src={previewVideo}
+            controls
+            autoPlay
+            className="rounded max-h-[90vh] max-w-[90vw]"
+          />
         </div>
       )}
     </>
   );
 };
-

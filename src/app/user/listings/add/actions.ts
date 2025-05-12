@@ -1,86 +1,21 @@
 'use server';
 
 import dbConnect from '@/lib/mongodb';
-import Item from '@/models/item';
-import { redirect } from 'next/navigation';
-import { session } from '@/app/actions/auth';
-import fs from 'fs';
-import path from 'path';
-import sharp from 'sharp';
+
 import { Subcategory, ISubcategory } from '@/models/subcategory';
 import Category, { ICategory } from '@/models/category';
 
-// Define the image upload paths
-const UPLOAD_DIR = path.join(process.cwd(), 'public/uploads');
-const THUMBNAIL_DIR = path.join(process.cwd(), 'public/uploads/thumbnails');
 
-// Ensure the upload and thumbnail directories exist
-if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-if (!fs.existsSync(THUMBNAIL_DIR)) fs.mkdirSync(THUMBNAIL_DIR, { recursive: true });
-
-type ItemForm = {
-  subcategoryKey: string;
-  itemTitle: string;
-  itemDescription: string;
-  images: File[];
-};
-
-export async function addItem({ subcategoryKey, itemTitle, itemDescription, images }: ItemForm) {
-  const user = await session();
-  if (!user) redirect('/login');
-
-  await dbConnect();
-
-  // Prepare the images array to store in the database
-  const imageUrls = [];
-
-  // Process each image
-  for (const image of images) {
-    const fileName = `${Date.now()}-${Math.random()}.jpg`;
-    const filePath = path.join(UPLOAD_DIR, fileName);
-    const thumbnailName = `thumb-${fileName}`;
-    const thumbnailPath = path.join(THUMBNAIL_DIR, thumbnailName);
-
-    const buffer = await image.arrayBuffer();
-    const imageBuffer = Buffer.from(buffer);
-
-    // Save the image to the upload directory
-    await fs.promises.writeFile(filePath, imageBuffer);
-
-    // Create a thumbnail using sharp
-    await sharp(filePath)
-      .resize(150, 150)
-      .toFile(thumbnailPath);
-
-    imageUrls.push({
-      thumb: thumbnailName,
-      url: fileName,
-    });
-  }
-
-  // Create the item in the database with multiple images
-  await Item.create({
-    userId: user.userId,
-    subcategoryKey,
-    itemTitle,
-    itemDescription,
-    images: imageUrls,
-  });
-
-  // Redirect after success
-  redirect('/user/listings');
-}
-
+ 
 export async function getAllCategories() {
   await dbConnect();
-  
-  return Category.find({})
-    .then((categories) => {
-      return categories.map((category: ICategory) => ({
-        categoryKey: category.categoryKey,
-        categoryName: category.categoryName,
-      }));
-    });
+
+  return Category.find({}).then((categories) => {
+    return categories.map((category: ICategory) => ({
+      categoryKey: category.categoryKey,
+      categoryName: category.categoryName,
+    }));
+  });
 }
 
 export async function getAllSubCategories() {

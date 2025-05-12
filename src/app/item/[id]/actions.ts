@@ -49,6 +49,7 @@ export async function getItemById(id: string) {
         itemDescription: 1,
         createdAt: 1,
         images: 1,
+        videos: 1,
         subcategoryName: '$subcat.subcategoryName',
         subcategoryKey: '$subcat.subcategoryKey',
         categoryName: '$cat.categoryName',
@@ -77,5 +78,11 @@ export async function getItemById(id: string) {
     images: Array.isArray(item.images)
       ? item.images.map((image: { url: string, thumb: string }) => ({ url: image.url, thumb: image.thumb }))
       : [],
+
+      videos: Array.isArray(item.videos)
+      ? item.videos.map((video: { url: string, thumb: string }) => ({ url: video.url, thumb: video.thumb }))
+      : [],
+
+
   };
 }

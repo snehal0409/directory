@@ -52,6 +52,7 @@ export async function getSessionUser() {
 
     // Ensure you are referencing the correct User model
     const user = await User.findById(decoded.id).lean() as {
+      userId: any;
       id: any;
       _id: string;
       name: string;

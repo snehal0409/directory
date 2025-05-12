@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { addItem } from '../actions';
+import { addItem } from '../videos';
+
+
 
 type Category = {
   categoryKey: string;
@@ -24,7 +26,9 @@ export default function AddItemForm({ categories, subcategories }: Props) {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategory[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [videoFiles, setVideoFiles] = useState<File[]>([]); // Allow multiple videos
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
   const [error, setError] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -34,44 +38,54 @@ export default function AddItemForm({ categories, subcategories }: Props) {
     );
   }, [selectedCategory, subcategories]);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
     const files = event.target.files;
     if (files) {
       const newFiles = Array.from(files);
-      setImageFiles(prevFiles => [...prevFiles, ...newFiles]);
-
-      const previewUrls = newFiles.map(file => URL.createObjectURL(file));
-      setImagePreviews(prevPreviews => [...prevPreviews, ...previewUrls]);
+      if (type === 'image') {
+        setImageFiles(prevFiles => [...prevFiles, ...newFiles]);
+        const previewUrls = newFiles.map(file => URL.createObjectURL(file));
+        setImagePreviews(prevPreviews => [...prevPreviews, ...previewUrls]);
+      } else if (type === 'video') {
+        setVideoFiles(prevFiles => [...prevFiles, ...newFiles]);
+        const previewUrls = newFiles.map(file => URL.createObjectURL(file));
+        setVideoPreviews(prevPreviews => [...prevPreviews, ...previewUrls]);
+      }
     }
   };
 
-  const handleRemoveImage = (index: number) => {
-    setImageFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
-    setImagePreviews(prevPreviews => prevPreviews.filter((_, i) => i !== index));
+  const handleRemoveFile = (index: number, type: 'image' | 'video') => {
+    if (type === 'image') {
+      setImageFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+      setImagePreviews(prevPreviews => prevPreviews.filter((_, i) => i !== index));
+    } else if (type === 'video') {
+      setVideoFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+      setVideoPreviews(prevPreviews => prevPreviews.filter((_, i) => i !== index));
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const formData = new FormData(event.target as HTMLFormElement);
-    const subcategoryKey = formData.get('subcategoryKey') as string;
-    const itemTitle = formData.get('itemTitle') as string;
-    const itemDescription = formData.get('itemDescription') as string;
+    const formDataFromEvent = new FormData(event.target as HTMLFormElement);
+    const subcategoryKey = formDataFromEvent.get('subcategoryKey') as string;
+    const itemTitle = formDataFromEvent.get('itemTitle') as string;
+    const itemDescription = formDataFromEvent.get('itemDescription') as string;
 
-    if (!subcategoryKey || !itemTitle || !itemDescription || imageFiles.length === 0) {
-      setError('All fields and at least one image are required');
+    if (!subcategoryKey || !itemTitle || !itemDescription || imageFiles.length === 0 || videoFiles.length === 0) {
+      setError('All fields and at least one image and one video are required');
       return;
     }
 
-    const data = {
-      subcategoryKey,
-      itemTitle,
-      itemDescription,
-      images: imageFiles,
-    };
+    const formData = new FormData();
+    formData.append('subcategoryKey', subcategoryKey);
+    formData.append('itemTitle', itemTitle);
+    formData.append('itemDescription', itemDescription);
+    imageFiles.forEach((image, index) => formData.append(`images`, image));
+    videoFiles.forEach((video, index) => formData.append(`videos`, video));
 
-    console.log(data);
-    await addItem(data);
+    console.log(formData); 
+    await addItem(formData);
   };
 
   const openLightbox = (image: string) => {
@@ -81,6 +95,13 @@ export default function AddItemForm({ categories, subcategories }: Props) {
   const closeLightbox = () => {
     setSelectedImage(null);
   };
+
+  useEffect(() => {
+    return () => {
+      imagePreviews.forEach(preview => URL.revokeObjectURL(preview));
+      videoPreviews.forEach(preview => URL.revokeObjectURL(preview));
+    };
+  }, [imagePreviews, videoPreviews]);
 
   return (
     <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
@@ -153,10 +174,9 @@ export default function AddItemForm({ categories, subcategories }: Props) {
         <input
           id="image"
           type="file"
-          name="file"
           accept="image/*"
           multiple
-          onChange={handleFileChange}
+          onChange={e => handleFileChange(e, 'image')}
           className="w-full border p-2 rounded"
         />
         <div className="mt-4 flex flex-wrap gap-2">
@@ -172,7 +192,40 @@ export default function AddItemForm({ categories, subcategories }: Props) {
               />
               <button
                 type="button"
-                onClick={() => handleRemoveImage(index)}
+                onClick={() => handleRemoveFile(index, 'image')}
+                className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Video Upload */}
+      <div>
+        <label htmlFor="video" className="block mb-1">Upload Videos</label>
+        <input
+          id="video"
+          type="file"
+          accept="video/*"
+          multiple
+          onChange={e => handleFileChange(e, 'video')}
+          className="w-full border p-2 rounded"
+        />
+        <div className="mt-4 flex flex-wrap gap-2">
+          {videoPreviews.map((preview, index) => (
+            <div key={index} className="relative inline-block">
+              <video
+                src={preview}
+                width={128}
+                height={128}
+                className="object-cover cursor-pointer rounded"
+                controls
+              />
+              <button
+                type="button"
+                onClick={() => handleRemoveFile(index, 'video')}
                 className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
               >
                 ×

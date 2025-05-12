@@ -9,7 +9,7 @@ export default async function AddItemPage() {
    
       if (!user) {
          
-         redirect("/user/listings"); 
+         redirect("/user/login"); 
       }
   
   const categories = await getAllCategories();

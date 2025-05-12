@@ -90,6 +90,8 @@ export async function getItemsWithCategories(userId: string) {
         subcategoryName: '$subcat.subcategoryName',
         categoryName: '$cat.categoryName',
         images: 1,
+        videos: 1,
+        
       },
     },
   ]);
@@ -117,6 +119,7 @@ export async function getAllItems() {
         itemTitle: 1,
         itemDescription: 1,
         images: 1,
+        videos: 1,
         createdAt: 1,
         createdBy: {
           _id: '$createdBy._id',
