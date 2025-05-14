@@ -91,24 +91,25 @@ export default async function Home({ user }: Props) {
                 </h3>
 
                 {/* Username + Date */}
-                <div className="mb-3 text-sm text-gray-600 dark:text-gray-400">
-                  <Link
-                    href={`${listing.createdBy?._id ?? '#'}`}
-                    className="font-bold text-blue-700 dark:text-blue-300 hover:underline"
-                  >
-                    {listing.createdBy?.username ?? 'Unknown'}
-                  </Link>{' '}
-                  ·{' '}
-                  {moment(listing.createdAt).calendar(null, {
-                    sameDay: '[Today]',
-                    nextDay: '[Tomorrow]',
-                    nextWeek: 'dddd',
-                    lastDay: '[Yesterday]',
-                    lastWeek: '[Last] dddd',
-                    sameElse: 'MMM Do YYYY',
-                  })}{' '}
-                  • {moment(listing.createdAt).format('h:mm A')}
-                </div>
+               <div className="mb-3 text-sm text-gray-600 dark:text-gray-400">
+  <Link
+    href={`/contact/${listing.createdBy?._id}`}  
+    className="font-bold text-blue-700 dark:text-blue-300 hover:underline"
+  >
+    {listing.createdBy?.username ?? 'Unknown'}
+  </Link>{' '}
+  ·{' '}
+  {moment(listing.createdAt).calendar(null, {
+    sameDay: '[Today]',
+    nextDay: '[Tomorrow]',
+    nextWeek: 'dddd',
+    lastDay: '[Yesterday]',
+    lastWeek: '[Last] dddd',
+    sameElse: 'MMM Do YYYY',
+  })}{' '}
+  • {moment(listing.createdAt).format('h:mm A')}
+</div>
+
                 {/* Image */}
                 {listing.images && listing.images[0]?.url && (
                   <Link href={`/item/${listing._id}`}>

@@ -11,4 +11,4 @@ export default async function ProfilePage() {
    }
 
    return <Profile user={user} />;
-}
+}  

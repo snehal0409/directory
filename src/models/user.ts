@@ -2,10 +2,18 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IUser extends Document {
+  name: string | undefined;
   userId: string;   // 👈 Add this line
   username: string;
+  bio: string;
   email: string;
   password: string;
+  age?: number;       
+  gender?: string;    
+  location?: string;
+  facebook?: string; 
+  twitter?: string;
+  instagram?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,6 +24,15 @@ const userSchema = new Schema<IUser>(
     username: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
+    bio: { type: String, required: true },
+    age: { type: Number },       
+    gender: { type: String },    
+    location: { type: String }, 
+    facebook: { type: String },
+     twitter: { type: String },
+      instagram: { type: String },
+
+     
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt

@@ -31,12 +31,21 @@ export interface CategoryType {
 
 // src/types/index.ts
 export type UserType = {
+  userId: any;
   _id: string;
-  username: string;
+  name: string;
   email: string;
-  createdAt: string;
-  updatedAt: string;
-};
+  username: string;
+   password: string;
+  age: number;
+  gender: string;
+  location: string;
+   facebook?: string;
+  twitter?: string;
+  instagram?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export interface ActionResult {
   success?: boolean;
@@ -65,6 +74,9 @@ export interface ItemType {
 
 
 export interface User {
+  age: string;
+  gender: string;
+  location: string;
   _id: string;
   name: string;
   email: string;

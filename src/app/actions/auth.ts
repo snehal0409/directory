@@ -50,7 +50,14 @@ export async function login(formData: FormData) {
   cookieStore.set('token', token, { httpOnly: true });
 }
 
-export async function editProfile(data: { email?: string, username?: string } ) {
+export async function editProfile(data: { email?: string, username?: string, age?: number;
+  gender?: string;
+  location?: string;
+    facebook?: string;
+    twitter?: string;
+    instagram?: string;
+  }) {
+    // Function implementation
   await connectDB();
   const token = (await cookies()).get('token')?.value;
   if (!token) throw new Error('Unauthorized');
@@ -99,3 +106,15 @@ export async function session(){
     throw error; 
   }
 }
+
+export const getUserById = async (id: string) => {
+  await connectDB();
+
+  try {
+    const user = await User.findById(id).select('name age gender location');
+    return user?.toObject();
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    return null;
+  }
+};
