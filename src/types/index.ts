@@ -99,3 +99,10 @@ export interface SessionUser {
   email: string;
   // Add any other fields your session has
 }
+export interface MessageType {
+  _id: string;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  createdAt: string;
+}

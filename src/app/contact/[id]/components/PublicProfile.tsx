@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 import {
   FaFacebookF,
@@ -10,6 +11,7 @@ import {
 
 interface PublicProfileProps {
   user: {
+    _id: any;
     username: string;
     email?: string;
     age?: number;
@@ -92,11 +94,13 @@ export const PublicProfile: React.FC<PublicProfileProps> = ({ user }) => {
         )}
 
         {/* Contact Button */}
-        <div>
-          <button className="w-full p-3 text-white bg-blue-500 hover:bg-blue-600 rounded-md">
-            Send Message
-          </button>
-        </div>
+<div>
+  <Link href={`/message/${user._id}`}>
+    <button className="w-full p-3 text-white bg-blue-500 hover:bg-blue-600 rounded-md">
+      Send Message
+    </button>
+  </Link>
+</div>
       </div>
     </div>
   );

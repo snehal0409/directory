@@ -1,18 +1,23 @@
-// src/app/contact/[id]/page.tsx
 import { getUserById } from './actions';
 import { PublicProfile } from './components/PublicProfile';
 import { redirect } from 'next/navigation';
+import { session } from '@/app/actions/auth';
 
 export default async function ContactPage({ params }: { params: Promise<{ id: string }> }) {
+   const currentUser = await session();
+
+  if (!currentUser) {
+    redirect('/login');
+  }  
   const { id } = await params;
 
   // Fetch user data
-  const user = await getUserById(id);
+  const otherUser = await getUserById(id);
 
   // Ensure the user object has the required properties
-  if (!user?.username) {
+  if (!otherUser?.username) {
     redirect('/404');
   }
 
-  return <PublicProfile user={user} />;
+  return <PublicProfile user={otherUser} />;
 }
