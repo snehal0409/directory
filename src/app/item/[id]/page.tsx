@@ -2,16 +2,21 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getItemById } from './actions';
 import LightboxGallery from './components/LightboxGallery';
-import moment from 'moment';  // Import moment
+import moment from 'moment';
+import { session } from '@/app/actions/auth';
 
 export default async function ItemPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const item = await getItemById(id);
   if (!item) return notFound();
 
+  const currentUser = await session();
+
+  const currentUserId = currentUser?._id?.toString();
+  const itemOwnerId = item.createdBy?._id?.toString();
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-yellow-50 to-orange-100 dark:from-zinc-900 dark:to-black p-6 sm:p-12">
-      {/* Home Link */}
       <div className="mb-8">
         <Link
           href="/"
@@ -41,15 +46,14 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
             {item.itemTitle}
           </h1>
 
-          <div className="mb-6 text-sm text-gray-600 dark:text-gray-400">
+          <div className="mb-6 text-sm text-gray-600 dark:text-gray-400 flex items-center space-x-2">
             <Link
               href="#"
               className="font-semibold text-gray-800 dark:text-white hover:underline"
             >
               {item.createdBy?.username ?? 'Unknown'}
             </Link>
-            <span className="mx-1">•</span>
-            {/* Use moment to format the date */}
+            <span>•</span>
             <div className="flex items-baseline space-x-1">
               <span>
                 {moment(item.createdAt).calendar(null, {
@@ -61,13 +65,22 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
                   sameElse: 'MMM Do YYYY',
                 })}
               </span>
-              <span className="ml-1">{/* Add a margin-left for spacing between date and time */}
-                at {moment(item.createdAt).format('h:mm A')}
-              </span>
+              <span className="ml-1">at {moment(item.createdAt).format('h:mm A')}</span>
             </div>
           </div>
 
-          {/* Image Gallery + Description */}
+          {/* Conditionally show Send Message button */}
+          {currentUserId && itemOwnerId && currentUserId !== itemOwnerId && (
+            <div className="mb-6">
+              <Link href={`/message/${itemOwnerId}`}>
+                <button className="w-full p-2 text-white bg-blue-500 hover:bg-blue-600 rounded-md">
+                  Send Message
+                </button>
+              </Link>
+            </div>
+          )}
+
+          {/* Gallery */}
           <LightboxGallery item={item} />
 
           {/* Description */}

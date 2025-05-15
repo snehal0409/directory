@@ -4,6 +4,7 @@ import { getAllItems } from '../user/listings/actions';
 import { getAllCategories } from '@/app/admin/categories/actions/getAllCategories';
 import type { ItemType, CategoryType } from '@/types';
 import Image from 'next/image';
+import { Header } from './Header';
 
 type Props = {
   user: {
@@ -19,40 +20,8 @@ export default async function Home({ user }: Props) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-zinc-900 dark:to-black">
       {/* Top Auth Buttons */}
-      <header className="flex justify-end gap-4 p-4 sm:p-6">
-        {user ? (
-          <>
-            <Link
-              href="/profile"
-              className="inline-block px-5 py-2 rounded-full backdrop-blur-sm bg-green-400 text-black font-bold shadow-md hover:bg-green-500 hover:scale-105 transition duration-300"
-            >
-              Profile
-            </Link>
-            <Link
-              href="/"
-              className="inline-block px-5 py-2 rounded-full backdrop-blur-sm bg-blue-300 text-black font-bold shadow-md hover:bg-blue-400 hover:scale-105 transition duration-300"
-            >
-              Home
-            </Link>
-          </>
-        ) : (
-          <>
-            <Link
-              href="/login"
-              className="inline-block px-5 py-2 rounded-full backdrop-blur-sm bg-blue-600 text-white font-bold shadow-md hover:bg-gray-300 hover:scale-105 transition duration-300"
-            >
-              Login
-            </Link>
-            <Link
-              href="/register"
-              className="inline-block px-5 py-2 rounded-full backdrop-blur-sm bg-green-400 text-white font-bold shadow-md hover:bg-gray-300 hover:scale-105 transition duration-300"
-            >
-              Register
-            </Link>
-          </>
-        )}
-      </header>
-
+      <Header />
+      
       {/* Main Grid Layout */}
       <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8 px-6 py-10 sm:px-12">
         {/* Sidebar - Categories */}
