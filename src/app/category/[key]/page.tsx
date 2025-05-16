@@ -1,8 +1,10 @@
+import React from 'react'
 import { CategoryType, SubcategoryType, ItemType } from "@/types";
 import { getCategoryData } from "./actions";
 import Link from "next/link";
 import moment from "moment"; // Import moment for date formatting
 import Image from "next/image"; // Import Image component for displaying images
+import { Header } from '@/app/_components/Header';
 
 interface Props {
   params: Promise <{
@@ -32,16 +34,7 @@ export default async function CategoryPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-yellow-50 to-orange-100 dark:from-zinc-900 dark:to-black p-6 sm:p-12">
-      
-      {/* Top Navigation Link */}
-      <div className="mb-8">
-        <Link
-          href="/"
-          className="inline-block px-5 py-2 rounded-full backdrop-blur-sm bg-pink-300 text-black font-bold shadow-md hover:bg-pink-400 hover:scale-105 transition duration-300"
-        >
-          ⬅ Home
-        </Link>
-      </div>
+      <Header />
 
       {/* Grid Layout */}
       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-8">
@@ -74,15 +67,16 @@ export default async function CategoryPage({ params }: Props) {
         <main className="flex flex-col gap-6">
           {listings.length > 0 ? (
             listings.map((listing) => (
-              <Link
-                key={listing._id}
-                href={`/item/${listing._id}`}
+              <div
                 className="p-6 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:scale-105"
+                key={listing._id}
               >
-                {/* Title */}
-                <h2 className="font-bold text-2xl text-gray-800 dark:text-white mb-2">
-                  {listing.itemTitle}
-                </h2>
+                <Link href={`/item/${listing._id}`}>
+                  {/* Title */}
+                  <h2 className="font-bold text-2xl text-gray-800 dark:text-white mb-2">
+                    {listing.itemTitle}
+                  </h2>
+                </Link>
 
                 {/* Username and Date below Title */}
                 <div className="text-sm text-gray-600 dark:text-gray-400 mb-4">
@@ -124,7 +118,7 @@ export default async function CategoryPage({ params }: Props) {
                 <p className="text-lg text-gray-700 dark:text-gray-300 whitespace-pre-line truncate-lines-2">
                   {listing.itemDescription}
                 </p>
-              </Link>
+              </div>
             ))
           ) : (
             <div className="text-gray-600 dark:text-gray-400 text-lg">

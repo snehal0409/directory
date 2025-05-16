@@ -6,9 +6,7 @@ import { session } from '@/app/actions/auth';
 export default async function ContactPage({ params }: { params: Promise<{ id: string }> }) {
    const currentUser = await session();
 
-  if (!currentUser) {
-    redirect('/login');
-  }  
+  
   const { id } = await params;
 
   // Fetch user data

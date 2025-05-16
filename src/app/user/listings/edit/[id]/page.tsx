@@ -8,6 +8,7 @@ import { session } from '@/app/actions/auth';
 import { notFound } from 'next/navigation';
 import { getItemById } from '@/app/item/[id]/actions';
 import { getAllCategories, getAllSubCategories } from '@/app/user/listings/add/actions';
+import { Header } from '@/app/_components/Header';
 
 type Props = {
   params: Promise< { id: string }>;
@@ -27,13 +28,16 @@ export default async function EditItemPage({ params }: Props) {
   const subcategories = await getAllSubCategories();  
 
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-4">Edit Listing</h2>
-      <EditItemForm
-         item={item}
-        categories={categories}
-        subcategories={subcategories}
-      />
-    </div>
+    <>
+      <Header />
+       <div className="space-y-4 m-6">
+      <h2 className="text-xl font-semibold">Add New Listing</h2>
+        <EditItemForm
+          item={item}
+          categories={categories}
+          subcategories={subcategories}
+        />
+      </div>
+    </>
   );
 }

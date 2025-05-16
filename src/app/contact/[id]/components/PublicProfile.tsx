@@ -1,3 +1,4 @@
+import { Header } from '@/app/_components/Header';
 import Link from 'next/link';
 import React from 'react';
 import {
@@ -25,7 +26,8 @@ interface PublicProfileProps {
 
 export const PublicProfile: React.FC<PublicProfileProps> = ({ user }) => {
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-indigo-100 to-pink-100 px-6">
+      <><Header />
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-indigo-100 to-pink-100 px-6">
       <div className="bg-white shadow-2xl rounded-xl p-8 w-full max-w-lg">
         {/* Avatar */}
         <div className="flex flex-col items-center mb-8">
@@ -94,14 +96,14 @@ export const PublicProfile: React.FC<PublicProfileProps> = ({ user }) => {
         )}
 
         {/* Contact Button */}
-<div>
-  <Link href={`/message/${user._id}`}>
-    <button className="w-full p-3 text-white bg-blue-500 hover:bg-blue-600 rounded-md">
-      Send Message
-    </button>
-  </Link>
-</div>
+        <div>
+          <Link href={`/message/${user._id}`}>
+            <button className="w-full p-3 text-white bg-blue-500 hover:bg-blue-600 rounded-md">
+              Send Message
+            </button>
+          </Link>
+        </div>
       </div>
-    </div>
+    </div></>
   );
 };

@@ -5,6 +5,7 @@ import Image from 'next/image';
 
 import { getSessionAdmin } from '@/lib/session';
 import { redirect } from 'next/navigation';
+import AdminNav from '../dashboard/components/AdminNav';
 
 
 export default async function ItemsPage() {
@@ -15,6 +16,7 @@ export default async function ItemsPage() {
 
   return (
     <div className="p-4">
+        <AdminNav />
       <AdminHeadingLink title="Items" href="/admin/items/add" linkText="Add Item" />
 
       <table className="w-full border mt-4 text-sm">

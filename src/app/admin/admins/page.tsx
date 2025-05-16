@@ -22,7 +22,7 @@ export default async function AdminDashboardPage() {
   return (
     <div className="p-6">
       <AdminNav /> {/* Added AdminNav component */}
-      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">Manage Admins</h2>
         <div className="space-x-2">

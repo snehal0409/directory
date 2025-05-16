@@ -97,7 +97,7 @@ export async function session(){
   try {
     const payload = jwt.verify(token, SECRET) as { userId: string };
     const user = await User.findById(payload.userId).select('-password');
-    return user;
+    return JSON.parse(JSON.stringify(user));
   } catch (error: any) {
     if (error.name === 'TokenExpiredError') {
       console.warn('Token expired');

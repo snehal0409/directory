@@ -1,3 +1,4 @@
+import { Header } from '../_components/Header';
 import { getInboxList } from './actions';
 import InboxList from './components/InboxList';
 import { session } from '@/app/actions/auth';
@@ -13,9 +14,11 @@ export default async function InboxPage() {
   const inbox = await getInboxList();
 
   return (
-    <div className="max-w-xl mx-auto p-4">
+      <><Header />
+      <div className="max-w-xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Inbox</h1>
+
       <InboxList inbox={inbox} />
-    </div>
+    </div></>
   );
 }

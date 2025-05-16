@@ -2,6 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 import SubcategoryTable from './components/SubcategoryTable';
 import { getAllSubcategories } from './actions/getAllSubcategories';
+import AdminNav from '../dashboard/components/AdminNav';
+
 
 export default async function SubcategoryPage() {
   const rawSubcategories = await getAllSubcategories();
@@ -14,13 +16,7 @@ export default async function SubcategoryPage() {
   return (
     <div className="p-6 space-y-6">
       {/* NAVIGATION */}
-      <nav className="flex space-x-6 border-b border-gray-300 pb-4 mb-4">
-        <Link href="/admin/dashboard" className="text-black-600 hover:underline">Dashboard</Link>
-        <Link href="/admin/categories" className="text-black-600 hover:underline">Categories</Link>
-        <Link href="/admin/subcategories" className="text-black-800 font-semibold underline">Subcategories</Link>
-        <Link href="/admin/users" className="text-black-600 hover:underline">Users</Link>
-        <Link href="/admin/profile" className="text-black-600 hover:underline">Profile</Link>
-      </nav>
+     <AdminNav />
 
       {/* TITLE AND BUTTON */}
       <div className="flex items-center justify-between">

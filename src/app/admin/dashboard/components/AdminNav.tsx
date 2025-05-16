@@ -11,8 +11,8 @@ export default function AdminNav() {
   return (
     <nav className="mb-4 space-x-4">
       <Link
-        className={clsx(pathname === '/admin/dashboard' && 'font-bold')}
-        href="/admin/dashboard"
+        className={clsx(pathname === "/admin/admins" && 'font-bold')}
+        href="/admin/admins"
       >
         Admins
       </Link>
@@ -36,16 +36,11 @@ export default function AdminNav() {
       </Link>
       <Link
         className={clsx(pathname === '/admin/' && 'font-bold')}
-        href="/user/listings"
+        href="/admin/items"
       >
         Items
       </Link>
-      <Link
-        className={clsx(pathname === '/admin/profile' && 'font-bold')}
-        href="/admin/profile"
-      >
-        Profile
-      </Link>
+    
     </nav>
   );
 }

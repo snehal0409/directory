@@ -4,6 +4,7 @@ import MessageBox from './components/MessageBox';
 import MessageThread from './components/MessageThread';
 import { session } from '@/app/actions/auth';
 import { getUserById } from './actions'
+import { Header } from '@/app/_components/Header';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -27,12 +28,13 @@ export default async function MessagePage({ params }: Props) {
   const messages = await getMessagesWithUser(otherUserId);
 
   return (
+    <><Header />
     <div className="max-w-xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Message {otherUser.username}</h1>
 
       <MessageThread messages={messages} currentUserId={currentUser.userId} otherUserId={otherUserId} />
 
       <MessageBox receiverId={otherUserId} />
-    </div>
+    </div></>
   );
 }

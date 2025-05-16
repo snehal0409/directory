@@ -3,12 +3,12 @@
 import { connectDB } from '@/lib/mongodb';
 import Item from '@/models/item';
 import { revalidatePath } from 'next/cache';
-import { getSessionUser } from '@/lib/session';
+import { session } from '../../actions/auth';
 import { redirect } from 'next/navigation';
 
 // Add a new item
 export async function addItem(formData: FormData) {
-  const user = await getSessionUser();
+  const user = await session();
   if (!user) redirect('/user/listings');
 
   const subcategoryKey = formData.get('subcategoryKey') as string;
@@ -32,23 +32,14 @@ export async function addItem(formData: FormData) {
   redirect('/user/listings');
 }
 
-// Get all items for the current user
-export async function getUserItems() {
-  await connectDB();
-  const user = await getSessionUser();
-  if (!user) return [];
-
-  const items = await Item.find({ userId: user._id })
-    .populate('userId', 'username')
-    .sort({ createdAt: -1 });
-
-  return JSON.parse(JSON.stringify(items));
-}
 
 // Delete an item
 export async function deleteItem(id: string) {
+  const user = await session();
+  if (!user) redirect('/user/listings');
+
   await connectDB();
-  await Item.findByIdAndDelete(id);
+  await Item.findOneAndDelete({ _id: id, userId: user.userId });
   revalidatePath("/user/listings");
 }
 
@@ -139,14 +130,14 @@ export async function updateItem(
   description: string,
   subcategoryKey: string
 ) {
-  const user = await getSessionUser();
+  const user = await session();
   if (!user) redirect('/user/listings');
 
   await connectDB();
 
   // Ensure user can only update their own items
   await Item.updateOne(
-    { _id: id, userId: user._id },
+    { _id: id, userId: user.userId },
     {
       $set: {
         itemTitle: title,

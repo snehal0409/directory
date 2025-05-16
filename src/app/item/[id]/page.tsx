@@ -4,6 +4,7 @@ import { getItemById } from './actions';
 import LightboxGallery from './components/LightboxGallery';
 import moment from 'moment';
 import { session } from '@/app/actions/auth';
+import { Header } from '@/app/_components/Header';
 
 export default async function ItemPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -17,14 +18,7 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-yellow-50 to-orange-100 dark:from-zinc-900 dark:to-black p-6 sm:p-12">
-      <div className="mb-8">
-        <Link
-          href="/"
-          className="px-4 py-4 rounded-full backdrop-blur-sm bg-pink-300 text-black font-bold shadow-md hover:bg-pink-400 hover:scale-105 transition duration-300"
-        >
-          ⬅ Home
-        </Link>
-      </div>
+      <Header />
 
       <div className="flex p-6">
         {/* Sidebar */}
@@ -70,7 +64,7 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
           </div>
 
           {/* Conditionally show Send Message button */}
-          {currentUserId && itemOwnerId && currentUserId !== itemOwnerId && (
+           
             <div className="mb-6">
               <Link href={`/message/${itemOwnerId}`}>
                 <button className="w-full p-2 text-white bg-blue-500 hover:bg-blue-600 rounded-md">
@@ -78,7 +72,7 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
                 </button>
               </Link>
             </div>
-          )}
+          
 
           {/* Gallery */}
           <LightboxGallery item={item} />

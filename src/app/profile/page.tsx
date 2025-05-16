@@ -1,14 +1,19 @@
 import { Profile } from "./_components";
 import { session } from "../actions/auth";
-import { redirect } from "next/navigation"; 
+import { redirect } from "next/navigation";
+import {Header} from "../_components/Header"; // ✅ Import Header
 
 export default async function ProfilePage() {
-   const user = await session();
+  const user = await session();
 
-   if (!user) {
-      
-      redirect("/login"); 
-   }
+  if (!user) {
+    redirect("/login");
+  }
 
-   return <Profile user={user} />;
-}  
+  return (
+    <>
+      <Header /> {/* ✅ Header added here */}
+      <Profile user={user} />
+    </>
+  );
+}

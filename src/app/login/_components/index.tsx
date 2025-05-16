@@ -17,7 +17,7 @@ export function LoginForm() {
       await login(formData);
   
         setTimeout(() => {
-          router.push('/user/dashboard');
+          router.push('/');
         }, 1500);
     } catch (err: any) {
       setError(err.message || 'Registration failed. Please try again.');

@@ -74,11 +74,11 @@ export default function AddItemForm({ categories, subcategories }: Props) {
     const formData = new FormData(form);
   
     // Append images and videos manually
-    imageFiles.forEach((file, index) => {
+    imageFiles.forEach((file) => {
       formData.append(`images`, file);
     });
   
-    videoFiles.forEach((file, index) => {
+    videoFiles.forEach((file, ) => {
       formData.append(`videos`, file);
     });
 
