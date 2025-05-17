@@ -1,40 +1,50 @@
+"use client";
 
-
-
+import React, { useTransition } from "react";
 import { UserType } from "@/types";
 import UserRow from "./UserRow";
 
-
 interface UserTableProps {
-  users: UserType[]; // Define the type for the 'users' prop
+  users: UserType[];
 }
 
 export default function UserTable({ users }: UserTableProps) {
-  // Optionally, you can add a state to handle loading state as well
-  if (!users) {
-    return <div>Loading...</div>; // Or you could display a spinner
-  }
+  const [isPending, startTransition] = useTransition();
+
+  const refresh = () => {
+    startTransition(() => {
+      window.location.reload();
+    });
+  };
 
   return (
-    <table className="min-w-full divide-y divide-gray-200 text-sm text-left">
-      <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
-        <tr>
-          <th scope="col" className="px-6 py-3">Username</th>
-          <th scope="col" className="px-6 py-3">Email</th>
-          <th scope="col" className="px-6 py-3 text-center">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {users.length === 0 ? (
+    <div className="overflow-x-auto border border-gray-300 rounded-lg shadow-sm">
+      <table className="min-w-full table-auto">
+        <thead className="bg-gray-100">
           <tr>
-            <td colSpan={3} className="px-6 py-3 text-center">No users found</td>
+            <th className="border px-4 py-2 text-left">Username</th>
+            <th className="border px-4 py-2 text-left">Email</th>
+            <th className="border px-4 py-2 text-left">Actions</th>
           </tr>
-        ) : (
-          users.map((user) => (
-            <UserRow key={user._id} user={user} />
-          ))
-        )}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {users.length === 0 ? (
+            <tr>
+              <td colSpan={3} className="border px-4 py-2 text-center">
+                No users found
+              </td>
+            </tr>
+          ) : (
+            users.map((user) => (
+              <UserRow key={user._id} user={user} refresh={refresh} />
+            ))
+          )}
+        </tbody>
+      </table>
+
+      {isPending && (
+        <p className="text-sm text-gray-500 mt-2 px-2">Refreshing...</p>
+      )}
+    </div>
   );
 }

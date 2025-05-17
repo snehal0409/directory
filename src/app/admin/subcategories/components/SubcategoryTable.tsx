@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useTransition } from 'react';
-import SubcategoryRow from './SubcategoryRow';
+import React, { useTransition } from "react";
+import SubcategoryRow from "./SubcategoryRow";
 
 interface Subcategory {
   _id: string;
@@ -24,24 +24,26 @@ export default function SubcategoryTable({ subcategories }: SubcategoryTableProp
   };
 
   return (
-    <div className="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+    <div className="overflow-x-auto border border-gray-300 rounded-lg shadow-sm">
       <table className="min-w-full table-auto">
-        <thead className="bg-gray-100 text-gray-700">
+        <thead className="bg-gray-100">
           <tr>
-            <th className="px-6 py-3 text-left border-b">Subcategory Key</th>
-            <th className="px-6 py-3 text-left border-b">Subcategory Name</th>
-            <th className="px-6 py-3 text-left border-b">Parent Category</th>
-            <th className="px-6 py-3 text-left border-b">Actions</th>
+            <th className="border px-4 py-2 text-left">Subcategory Key</th>
+            <th className="border px-4 py-2 text-left">Subcategory Name</th>
+            <th className="border px-4 py-2 text-left">Parent Category</th>
+            <th className="border px-4 py-2 text-left">Actions</th>
           </tr>
         </thead>
-        <tbody className="text-sm text-gray-800">
+        <tbody>
           {subcategories.map((subcategory) => (
             <SubcategoryRow key={subcategory._id} subcategory={subcategory} refresh={refresh} />
           ))}
         </tbody>
       </table>
 
-      {isPending && <p className="text-sm text-gray-500 mt-2">Refreshing...</p>}
+      {isPending && (
+        <p className="text-sm text-gray-500 mt-2 px-2">Refreshing...</p>
+      )}
     </div>
   );
 }

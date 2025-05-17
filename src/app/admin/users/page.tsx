@@ -4,6 +4,7 @@ import { getAllUsers } from './actions/getAllUsers';
 import UserTable from './components/UserTable';
 import AdminNav from '../dashboard/components/AdminNav';
 import Link from 'next/link';
+import LogoutButton from '../dashboard/components/logout';
 
 export default async function ManageUsersPage() {
   const admin = await getSessionAdmin();
@@ -23,16 +24,20 @@ export default async function ManageUsersPage() {
         
        
         
-        <h1 className="text-xl font-semibold mb-5">Manage Users</h1>
-
-<div className="mb-6">
-  <Link
-    href="/admin/users/add"
-    className=" bg-blue-600  hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm"
-  >
-    Add User
-  </Link>
+      
+<div className="flex justify-between items-center mb-6">
+  <h1 className="text-2xl font-bold">Users</h1>
+  <div className="flex gap-2">
+    <Link
+      href="/admin/users/add"
+      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+    >
+      + Add Subcategory
+    </Link>
+    <LogoutButton />
+  </div>
 </div>
+
         
       <UserTable users={usersData} /> {/* Pass the users data as a prop */}
 

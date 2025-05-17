@@ -35,7 +35,7 @@ export default function AdminNav() {
         Users
       </Link>
       <Link
-        className={clsx(pathname === '/admin/' && 'font-bold')}
+        className={clsx(pathname === '/admin/items' && 'font-bold')}
         href="/admin/items"
       >
         Items

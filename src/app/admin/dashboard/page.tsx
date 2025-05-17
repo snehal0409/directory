@@ -8,7 +8,7 @@ export default async function AdminDashboardPage() {
   // Check if the admin is logged in
   const admin = await getSessionAdmin();
 
-  // If no admin session exists, redirect to login page
+
   if (!admin) redirect("/admin/login");
 
   return (

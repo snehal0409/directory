@@ -15,8 +15,8 @@ export default function AdminTable({
     <table className="w-full border-collapse border">
       <thead>
         <tr>
-          <th className="border px-4 py-2 text-left">Username</th>
-          <th className="border px-4 py-2 text-left">Actions</th>
+          <th className="border px-4 py-2 bg-gray-100 text-left">Username</th>
+          <th className="border px-4 py-2 bg-gray-100 text-left">Actions</th>
         </tr>
       </thead>
       <tbody>
