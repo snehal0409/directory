@@ -5,7 +5,7 @@ import { AdminType } from "../../../../types";
 import { redirect } from "next/navigation";
 import { getSessionAdmin } from "@/lib/session"; // Adjust the path as per your project
 
-export default async function EditAdminPage({ params }: { params: { id: string } }) {
+export default async function EditAdminPage   ({ params }: { params: Promise< { id: string }> }) {
  
   const sessionAdmin = await getSessionAdmin();
   if (!sessionAdmin) {
@@ -13,7 +13,7 @@ export default async function EditAdminPage({ params }: { params: { id: string }
     redirect("/admin/login");
   }
 
-  const { id } = params;
+  const  { id } = await params;
   const admin: AdminType | null = await getAdminById(id);
 
   if (!admin) {

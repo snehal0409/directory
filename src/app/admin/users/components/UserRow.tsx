@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { deleteUser } from "../actions/deleteUser";
 import { UserType } from "@/types";
 

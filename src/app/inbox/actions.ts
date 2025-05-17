@@ -3,7 +3,6 @@
 import Message from '@/models/message';
 import { connectDB } from '@/lib/mongodb';
 import { session } from '@/app/actions/auth';
-import User from '@/models/user';
 
 export async function getInboxList() {
   await connectDB();
@@ -11,8 +10,6 @@ export async function getInboxList() {
   if (!currentUser) return [];
 
   const userId = currentUser.userId;
-
-  // Aggregate to get all distinct conversation users and last message
   const inbox = await Message.aggregate([
     {
       $match: {
@@ -20,7 +17,7 @@ export async function getInboxList() {
       },
     },
     {
-      $sort: { createdAt: -1 }, // newest first
+      $sort: { createdAt: -1 },
     },
     {
       $project: {

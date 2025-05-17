@@ -18,17 +18,21 @@ export const updateUser = async (id: string, formData: FormData) => {
 export const getUserById = async (id: string): Promise<UserType | null> => {
   await connectDB();
 
-  // Use lean and cast the result to UserType
   const user = await User.findById(id).lean<UserType>();
 
   if (!user) return null;
-
-  // Safely convert createdAt to Date and handle as a string or Date
  
-  const userWithId: UserType = {
+ const userWithId: UserType = {
     _id: user._id.toString(),
     username: user.username,
+    userId: user.userId,
     email: user.email,
+    age: user.age,
+    gender: user.gender,
+    location: user.location,
+    facebook: user.facebook,
+    twitter: user.twitter,
+    instagram: user.instagram,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
   };

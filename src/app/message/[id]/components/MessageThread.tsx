@@ -14,8 +14,10 @@ export default function MessageThread({
 }) {
   const [messages, setMessages] = useState(serverMessages)
 
-  useEffect(()=>{
-    async function fetchMessages(){
+  useEffect(() => {
+    async function fetchMessages() {
+      if (!otherUserId) return
+
       const newMessages = await getMessagesWithUser(otherUserId)
 
       setMessages(newMessages)
@@ -24,25 +26,24 @@ export default function MessageThread({
     const interval = setInterval(fetchMessages, 3000);
 
     return () => clearInterval(interval);
-  },[])
+  }, [otherUserId])
 
   return (
     <div className="space-y-2 mb-4 max-h-96 overflow-y-auto border p-4 rounded flex flex-col">
-        {messages.map((msg: any) => {
-          const isSender = msg.senderId === currentUserId;
-          return (
-            <div
-              key={msg._id}
-              className={`p-2 rounded max-w-[75%] ${
-                isSender
-                  ? 'bg-blue-500 self-end text-right' 
-                  : 'bg-gray-300 self-start text-left' 
+      {messages.map((msg: any) => {
+        const isSender = msg.senderId === currentUserId;
+        return (
+          <div
+            key={msg._id}
+            className={`p-2 rounded max-w-[75%] ${isSender
+                ? 'bg-blue-500 self-end text-right'
+                : 'bg-gray-300 self-start text-left'
               }`}
-            >
-             <b>{isSender ? 'Me' : msg.sender.username}:</b> {msg.content}
-            </div>
-          );
-        })}
-      </div>
+          >
+            <b>{isSender ? 'Me' : msg.sender.username}:</b> {msg.content}
+          </div>
+        );
+      })}
+    </div>
   );
 }

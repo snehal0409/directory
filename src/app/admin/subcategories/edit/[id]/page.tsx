@@ -6,9 +6,9 @@ import { getSessionAdmin } from '@/lib/session'; // adjust path as needed
 import { redirect } from 'next/navigation';
 
 interface EditPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function EditSubcategoryPage({ params }: EditPageProps) {
@@ -17,7 +17,7 @@ export default async function EditSubcategoryPage({ params }: EditPageProps) {
     redirect('/admin/login');
   }
 
-  const { id } = params;
+  const { id } = await params;
   const subcategory = await getSubcategoryById(id);
   const categories = await getAllCategories();
 

@@ -1,9 +1,7 @@
-import  Home  from "./_components";
-import { session } from "./actions/auth";
+import Home from "./_components";
 
 export default async function HomePage() {
-   const user = await session()
     return (
-        <Home user={user} />
+        <Home />
     );
 }

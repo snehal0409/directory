@@ -81,8 +81,8 @@ export default function AddItemForm({ categories, subcategories }: Props) {
     formData.append('subcategoryKey', subcategoryKey);
     formData.append('itemTitle', itemTitle);
     formData.append('itemDescription', itemDescription);
-    imageFiles.forEach((image, index) => formData.append(`images`, image));
-    videoFiles.forEach((video, index) => formData.append(`videos`, video));
+    imageFiles.forEach((image) => formData.append(`images`, image));
+    videoFiles.forEach((video) => formData.append(`videos`, video));
 
     console.log(formData); 
     await addItem(formData);

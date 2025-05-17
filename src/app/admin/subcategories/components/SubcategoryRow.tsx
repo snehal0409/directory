@@ -19,8 +19,8 @@ export default function SubcategoryRow({ subcategory, refresh }: SubcategoryRowP
     const confirmed = confirm(`Are you sure you want to delete "${subcategory.subcategoryName}"?`);
     if (!confirmed) return;
 
-    const result = await deleteSubcategory(subcategory._id);
-    // If deleteSubcategory returns void, just refresh after calling it
+    await deleteSubcategory(subcategory._id);
+
     refresh();
   };
 

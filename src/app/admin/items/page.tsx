@@ -1,8 +1,6 @@
-import AdminHeadingLink from './components/AdminHeadingLink';
 import Link from 'next/link';
 import { deleteItem, getItemsWithCategories } from './actions';
 import Image from 'next/image';
-
 import { getSessionAdmin } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import AdminNav from '../dashboard/components/AdminNav';
@@ -10,8 +8,8 @@ import LogoutButton from '../dashboard/components/logout';
 
 
 export default async function ItemsPage() {
-    const user = await getSessionAdmin();
-    if (!user) redirect('/admin/login');
+  const user = await getSessionAdmin();
+  if (!user) redirect('/admin/login');
 
   const items = await getItemsWithCategories();
 
@@ -31,7 +29,7 @@ export default async function ItemsPage() {
         </div>
       </div>
     </div>
-    <table className="w-full border-collapse border border-gray-300 mt-4 text-sm">
+      <table className="w-full border-collapse border border-gray-300 mt-4 text-sm">
         <thead>
           <tr className="bg-gray-100">
             <th className="p-2 border border-black-300">Title</th>

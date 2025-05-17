@@ -1,39 +1,23 @@
 'use server';
-      
+
 import dbConnect from '@/lib/mongodb';
 import Item from '@/models/item';
 import { redirect } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
-
 import { session } from '@/app/actions/auth';
 
-
-// Define the image upload paths
 const UPLOAD_DIR = path.join(process.cwd(), 'public/uploads');
 const THUMBNAIL_DIR = path.join(process.cwd(), 'public/uploads/thumbnails');
-
 const VIDEO_DIR = path.join(process.cwd(), 'public/uploads/videos');
 
-// Ensure directories exist
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 if (!fs.existsSync(THUMBNAIL_DIR)) fs.mkdirSync(THUMBNAIL_DIR, { recursive: true });
 if (!fs.existsSync(VIDEO_DIR)) fs.mkdirSync(VIDEO_DIR, { recursive: true });
 
-
-
-type ItemForm = {
-  subcategoryKey: string;
-  itemTitle: string;
-  itemDescription: string;
-  images: File[];
-  videos?: File[];
-};
-
 export async function addItem(formData: FormData) {
-    console.log('begin add item')
-const user = await session();
+  const user = await session();
   if (!user) redirect('/user/login');
 
   await dbConnect();
@@ -41,7 +25,6 @@ const user = await session();
   const imageUrls: { url: string; thumb: string }[] = [];
   const videoUrls: { url: string; thumb: string }[] = [];
 
-  // Process images
   const images = formData.getAll('images') as File[];
   for (const image of images) {
     const fileName = `${Date.now()}-${Math.random()}.jpg`;
@@ -62,7 +45,6 @@ const user = await session();
     });
   }
 
-  // Process videos
   const videos = formData.getAll('videos') as File[];
   if (videos && videos.length > 0) {
     for (const video of videos) {
@@ -75,7 +57,7 @@ const user = await session();
 
       videoUrls.push({
         url: videoName,
-        thumb: videoName, 
+        thumb: videoName,
       });
     }
   }
@@ -83,15 +65,6 @@ const user = await session();
   const subcategoryKey = formData.get('subcategoryKey') as string;
   const itemTitle = formData.get('itemTitle') as string;
   const itemDescription = formData.get('itemDescription') as string;
-
-  console.log({
-    userId: user.userId,
-    subcategoryKey,
-    itemTitle,
-    itemDescription,
-    images: imageUrls,
-    videos: videoUrls,
-  }, "item create")
 
   await Item.create({
     userId: user.userId,

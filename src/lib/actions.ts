@@ -1,6 +1,5 @@
 import connectToDatabase from '@/lib/mongodb';
 import ItemModel from '@/models/item';
-import { IUser } from '@/models/user';
 import UserModel from '@/models/user';
 
 export const getItemById = async (itemId: string) => {
@@ -23,18 +22,17 @@ export const deleteItem = async (itemId: string) => {
   return ItemModel.findByIdAndDelete(itemId).exec();
 };
 export const addItem = async (userId: string, itemData: { subCategoryKey: string; itemTitle: string; itemDescription: string }) => {
-    await connectToDatabase();
-    const newItem = new ItemModel({ ...itemData, userId });
-    return await newItem.save();
-  };
-  
-  export const getUserProfile = async (userId: string) => {
-    try {
-      // Fetch user by userId
-      const user = await UserModel.findById(userId).select('name age gender location');
-      return user;
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-      return null;
-    }
-  };
+  await connectToDatabase();
+  const newItem = new ItemModel({ ...itemData, userId });
+  return await newItem.save();
+};
+
+export const getUserProfile = async (userId: string) => {
+  try {
+    const user = await UserModel.findById(userId).select('name age gender location');
+    return user;
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    return null;
+  }
+};

@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import { getItemById } from './actions';
 import LightboxGallery from './components/LightboxGallery';
 import moment from 'moment';
-import { session } from '@/app/actions/auth';
 import { Header } from '@/app/_components/Header';
 
 export default async function ItemPage({ params }: { params: Promise<{ id: string }> }) {
@@ -11,9 +10,6 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
   const item = await getItemById(id);
   if (!item) return notFound();
 
-  const currentUser = await session();
-
-  const currentUserId = currentUser?._id?.toString();
   const itemOwnerId = item.createdBy?._id?.toString();
 
   return (
@@ -21,7 +17,6 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
       <Header />
 
       <div className="flex p-6">
-        {/* Sidebar */}
         <aside className="w-64 bg-white dark:bg-zinc-800 shadow-xl rounded-lg p-6">
           <div>
             <p className="text-base text-gray-900 dark:text-white">{item.categoryName}</p>
@@ -34,7 +29,6 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
           </div>
         </aside>
 
-        {/* Main content */}
         <main className="flex-1 bg-white dark:bg-zinc-900 p-8 rounded-lg shadow-2xl ml-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
             {item.itemTitle}
@@ -63,21 +57,15 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
             </div>
           </div>
 
-          {/* Conditionally show Send Message button */}
-           
-            <div className="mb-6">
-              <Link href={`/message/${itemOwnerId}`}>
-                <button className="w-full p-2 text-white bg-blue-500 hover:bg-blue-600 rounded-md">
-                  Send Message
-                </button>
-              </Link>
-            </div>
-          
+          <div className="mb-6">
+            <Link href={`/message/${itemOwnerId}`}>
+              <button className="w-full p-2 text-white bg-blue-500 hover:bg-blue-600 rounded-md">
+                Send Message
+              </button>
+            </Link>
+          </div>
 
-          {/* Gallery */}
           <LightboxGallery item={item} />
-
-          {/* Description */}
           <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-400 mt-6">
             {item.itemDescription}
           </p>

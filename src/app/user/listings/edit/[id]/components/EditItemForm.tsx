@@ -243,7 +243,7 @@ export const EditItemForm = ({
                   height={128}
                   controls
                   className="rounded cursor-pointer"
-                  onClick={() => handleVideoThumbnailClick(`/uploads/${video.url}`)}
+                  onClick={() => handleVideoThumbnailClick(`/uploads/videos/${video.url}`)}
                 >
                   <source src={`/uploads/videos/${video.url}`} type="video/mp4" />
                   Your browser does not support the video tag.
@@ -314,29 +314,40 @@ export const EditItemForm = ({
       {previewImage && (
         <div
           className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+        ><a
           onClick={() => setPreviewImage(null)}
+          onKeyUp={() => setPreviewImage(null)}
+          href="#"
+          title="Preview"
         >
-          <Image
-            src={previewImage}
-            alt="Preview"
-            width={800}
-            height={800}
-            className="rounded max-h-[90vh] max-w-[90vw] object-contain"
-          />
+            <Image
+              src={previewImage}
+              alt="Preview"
+              width={800}
+              height={800}
+              className="rounded max-h-[90vh] max-w-[90vw] object-contain"
+            />
+          </a>
         </div>
       )}
 
       {previewVideo && (
         <div
           className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
-          onClick={() => setPreviewVideo(null)}
         >
-          <video
-            src={previewVideo}
-            controls
-            autoPlay
-            className="rounded max-h-[90vh] max-w-[90vw]"
-          />
+          <a
+            onClick={() => setPreviewVideo(null)}
+            onKeyUp={() => setPreviewVideo(null)}
+            href="#"
+            title="Preview"
+          >
+            <video
+              src={previewVideo}
+              controls
+              autoPlay
+              className="rounded max-h-[90vh] max-w-[90vw]"
+            />
+          </a>
         </div>
       )}
     </>

@@ -21,10 +21,10 @@ module.exports = {
       project: './tsconfig.json',
     },
     rules: {
-      // Example custom rules
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'react-hooks/exhaustive-deps': 'warn',
-      'jsx-a11y/anchor-is-valid': 'off', // Next.js handles <Link>
+      'jsx-a11y/anchor-is-valid': 'off', 
+      'jsx-a11y/media-has-caption': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
     },
     settings: {

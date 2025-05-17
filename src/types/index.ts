@@ -33,10 +33,8 @@ export interface CategoryType {
 export type UserType = {
   userId: any;
   _id: string;
-  name: string;
   email: string;
   username: string;
-   password: string;
   age: number;
   gender: string;
   location: string;
