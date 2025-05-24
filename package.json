@@ -10,7 +10,9 @@
     "lint:fix": "next lint --fix"
   },
   "dependencies": {
+    "@types/aws-sdk": "^0.0.42",
     "@types/formidable": "^3.4.5",
+    "aws-sdk": "^2.1692.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",

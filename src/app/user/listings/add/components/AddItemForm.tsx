@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { addItem } from '../videos';
+import { useRouter } from 'next/navigation';
 
 
 
@@ -20,9 +21,10 @@ type Subcategory = {
 type Props = {
   categories: Category[];
   subcategories: Subcategory[];
+  userId: string;
 };
 
-export default function AddItemForm({ categories, subcategories }: Props) {
+export default function AddItemForm({ categories, subcategories, userId }: Props) {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategory[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -31,7 +33,7 @@ export default function AddItemForm({ categories, subcategories }: Props) {
   const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
   const [error, setError] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
+  const router = useRouter();
   useEffect(() => {
     setFilteredSubcategories(
       subcategories.filter(sub => sub.subcategoryParent === selectedCategory)
@@ -79,14 +81,19 @@ export default function AddItemForm({ categories, subcategories }: Props) {
 
     const formData = new FormData();
     formData.append('subcategoryKey', subcategoryKey);
+     formData.append('userId', userId);
     formData.append('itemTitle', itemTitle);
     formData.append('itemDescription', itemDescription);
     imageFiles.forEach((image) => formData.append(`images`, image));
     videoFiles.forEach((video) => formData.append(`videos`, video));
 
-    console.log(formData); 
-    await addItem(formData);
+    await fetch('http://localhost:3100/items', {
+      method: 'POST',
+      body: formData,
+    });
+    router.push("/user/listings");
   };
+
 
   const openLightbox = (image: string) => {
     setSelectedImage(image);

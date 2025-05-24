@@ -16,14 +16,14 @@ export default async function AddItemPage() {
   const categories = await getAllCategories();
   const subcategories = await getAllSubCategories();
 
-
   return (
     <><Header />
     <div className="space-y-4 m-6">
       <h2 className="text-xl font-semibold">Add New Listing</h2>
       <AddItemForm
         categories={categories}
-        subcategories={subcategories} />
+        subcategories={subcategories}
+        userId={user.userId} />
     </div></>
   );
 }
