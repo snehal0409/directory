@@ -95,16 +95,24 @@ export const EditItemForm = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateItem({
-      _id: item._id,
-      itemTitle,
-      itemDescription,
-      subCategoryKey,
-      existingImages,
-      newImages: newImageFiles,
-      existingVideos,
-      newVideos: newVideoFiles,
+    const formData = new FormData();
+    formData.append('subCategoryKey', subCategoryKey);
+    formData.append('itemTitle', itemTitle);
+    formData.append('itemDescription', itemDescription);
+   
+
+    newImageFiles.forEach((image) => formData.append('images', image));
+    newVideoFiles.forEach((video) => formData.append('videos', video));
+
+    
+    existingImages.forEach((img) => formData.append('existingImages', img.url));
+    existingVideos.forEach((vid) => formData.append('existingVideos', vid.url));
+
+    await fetch(`http://localhost:3100/items/${item._id}`, {
+      method: 'PUT',
+      body: formData,
     });
+
     router.push('/user/listings');
   };
 
