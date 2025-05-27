@@ -4,13 +4,43 @@ import { getItemById } from './actions';
 import LightboxGallery from './components/LightboxGallery';
 import moment from 'moment';
 import { Header } from '@/app/_components/Header';
+import { getPresignedDownloadUrl } from '@/lib/s3';
 
 export default async function ItemPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const item = await getItemById(id);
-  if (!item) return notFound();
+const item = await getItemById(id);
+if (!item) return notFound();
 
-  const itemOwnerId = item.createdBy?._id?.toString();
+const itemOwnerId = item.createdBy?._id?.toString();
+
+// Inject presigned URLs
+item.images = await Promise.all(
+  item.images.map(async (img: { thumb: string; url: string; }) => {
+    const presignedUrl = await getPresignedDownloadUrl(img.thumb);
+    const mainUrl = await getPresignedDownloadUrl(img.url);
+    return {
+      ...img,
+      presignedUrl,
+      mainUrl,
+    };
+  })
+);
+
+item.videos = await Promise.all(
+  item.videos.map(async (video: { thumb: string; url: string; }) => {
+    const presignedUrl = await getPresignedDownloadUrl(video.thumb);
+    const mainUrl = await getPresignedDownloadUrl(video.url);
+    return {
+      ...video,
+      presignedUrl,
+      mainUrl,
+    };
+  })
+);
+
+
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-yellow-50 to-orange-100 dark:from-zinc-900 dark:to-black p-6 sm:p-12">
