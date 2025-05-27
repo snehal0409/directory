@@ -31,7 +31,7 @@ export default async function EditItemPage({ params }: Props) {
     <>
       <Header />
        <div className="space-y-4 m-6">
-      <h2 className="text-xl font-semibold">Add New Listing</h2>
+      <h2 className="text-xl font-semibold">Edit Listing</h2>
         <EditItemForm
           item={item}
           categories={categories}

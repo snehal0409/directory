@@ -5,11 +5,36 @@ import { getAllCategories } from '@/app/admin/categories/actions/getAllCategorie
 import type { ItemType, CategoryType } from '@/types';
 import Image from 'next/image';
 import { Header } from './Header';
+import { getPresignedDownloadUrl } from '@/lib/s3';
 
 
 export default async function Home() {
   const listings: ItemType[] = await getAllItems();
   const categories: CategoryType[] = await getAllCategories();
+
+ const listingsWithSignedUrls = await Promise.all(
+  listings.map(async (listing) => {
+    if (listing.images?.length && listing.images[0].thumb) {
+      try {
+        const presignedUrl = await getPresignedDownloadUrl(listing.images[0].thumb);
+        return {
+          ...listing,
+          images: [
+            {
+              ...listing.images[0],
+              presignedUrl,
+            },
+            ...listing.images.slice(1),
+          ],
+        };
+      } catch (err) {
+        console.error(`Error fetching presigned URL for key ${listing.images[0].thumb}`, err);
+      }
+    }
+    return listing;
+  })
+);
+
 
   return (
     <><Header />
@@ -32,8 +57,8 @@ export default async function Home() {
           <main className="flex flex-col gap-6">
             <h2 className="text-2xl font-extrabold text-gray-800 dark:text-white">All Listings</h2>
 
-            {listings.length > 0 ? (
-              listings.map((listing) => (
+            {listingsWithSignedUrls.length > 0 ? (
+              listingsWithSignedUrls.map((listing) => (
                 <div
                   key={listing._id}
                   className="p-6 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-2xl shadow-lg hover:shadow-2xl transition-transform transform hover:scale-[1.03]"
@@ -62,11 +87,11 @@ export default async function Home() {
                     })}{' '}
                     • {moment(listing.createdAt).format('h:mm A')}
                   </div>
-                  {listing.images && listing.images[0]?.url && (
+                  {listing.images && listing.images[0]?.presignedUrl  && (
                     <Link href={`/item/${listing._id}`}>
                       <div className="relative w-full h-64 mb-4">
                         <Image
-                          src={`/uploads/${listing.images[0].url}`}
+                          src={listing.images[0]?.presignedUrl  as string}
                           alt={listing.itemTitle}
                           layout="fill"
                           objectFit="cover"

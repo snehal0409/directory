@@ -1,6 +1,8 @@
 import { Schema, model, models, Document, Types } from 'mongoose';
 
 export type Image=  {
+  thumbnail: string;
+  presignedUrl: Image[];
   thumb: string,
   url: string,
 }

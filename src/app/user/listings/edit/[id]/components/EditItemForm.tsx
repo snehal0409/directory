@@ -99,14 +99,14 @@ export const EditItemForm = ({
     formData.append('subCategoryKey', subCategoryKey);
     formData.append('itemTitle', itemTitle);
     formData.append('itemDescription', itemDescription);
-   
+    formData.append('existingImages', JSON.stringify(existingImages));
+    formData.append( 'existingVideos', JSON.stringify(existingVideos))
 
     newImageFiles.forEach((image) => formData.append('images', image));
     newVideoFiles.forEach((video) => formData.append('videos', video));
 
     
-    existingImages.forEach((img) => formData.append('existingImages', img.url));
-    existingVideos.forEach((vid) => formData.append('existingVideos', vid.url));
+  
 
     await fetch(`http://localhost:3100/items/${item._id}`, {
       method: 'PUT',

@@ -7,7 +7,9 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '900mb',
     }
   },
+  images: {
+    domains:[process.env.AWS_DOMAIN!]
+  }
 };
-
 export default nextConfig;
 
