@@ -7,6 +7,7 @@ import { Image as ImageType, Video as VideoType } from '@/models/item';
 import Image from 'next/image';
 import { Header } from '@/app/_components/Header';
 import { getPresignedDownloadUrl } from '@/lib/s3';
+import {Lightbox} from './components/Lightbox'
 
 export default async function ListingsPage() {
   const user = await session();
@@ -95,26 +96,14 @@ export default async function ListingsPage() {
                       </td>
                       <td className="px-4 py-3 border text-center">
                        {images?.length > 0 && images[0]?.presignedUrl ?(
-                          <Image
-                             src={images[0].presignedUrl}
-                            alt="Listing"
-                            width={64}
-                            height={64}
-                            className="object-cover rounded"
-                          />
+                          <Lightbox media={images[0]} type='image' />
                         ) : (
                           <span className="text-gray-500">No image</span>
                         )}
                       </td>
                       <td className="px-4 py-3 border text-center">
                         {videos?.length > 0 && videos[0]?.presignedUrl ? (
-                         <Image
-                                             src={videos[0].presignedUrl}
-                                             alt={`Video for ${itemTitle}`}
-                                             width={64}
-                                             height={64}
-                                             className="object-cover rounded"
-                                           />
+                         <Lightbox media={videos[0]} type='video' />
                         ) : (
                           <span className="text-gray-500">No video</span>
                         )}
