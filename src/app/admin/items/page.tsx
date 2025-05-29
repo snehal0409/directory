@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import AdminNav from '../dashboard/components/AdminNav';
 import LogoutButton from '../dashboard/components/logout';
 import { getPresignedDownloadUrl } from '@/lib/s3';
+import { Lightbox } from '@/app/user/listings/components/Lightbox';
 
 export default async function ItemsPage() {
   const user = await getSessionAdmin(); 
@@ -71,31 +72,20 @@ export default async function ItemsPage() {
               <td className="p-2 border border-black-300">{item.itemDescription}</td>
               <td className="p-2 border border-black-300">{item.categoryName}</td>
               <td className="p-2 border border-black-300">{item.subcategoryName}</td>
-              <td className="p-2 border border-black-300">
-                {item.images && item.images.length > 0 ? (
-                  <Image
-                    src={item.images[0].presignedUrl}
-                    alt={item.itemTitle}
-                    width={64}
-                    height={64}
-                    className="object-cover rounded" />
-                ) : (
-                  "No Image"
-                )}
-              </td>
-              <td className="p-2 border border-black-300">
-                {item.videos && item.videos.length > 0 ? (
-                  <Image
-                    src={item.videos[0].presignedUrl}
-                    alt={`Video for ${item.itemTitle}`}
-                    width={64}
-                    height={64}
-                    className="object-cover rounded"
-                  />
-                ) : (
-                  "No Video"
-                )}
-              </td>
+             <td className="px-4 py-3 border text-center">
+                    {item.images?.[0]?.presignedUrl ? (
+                      <Lightbox media={item.images[0]} type="image" />
+                    ) : (
+                      <span className="text-gray-500">No image</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 border text-center">
+                    {item.videos?.[0]?.presignedUrl ? (
+                      <Lightbox media={item.videos[0]} type="video" />
+                    ) : (
+                      <span className="text-gray-500">No video</span>
+                    )}
+                  </td>
 
               <td className="p-2 border border-black-500 ">
                 <Link href={`/admin/items/edit/${item._id}`} className="text-blue-600 hover:underline">
