@@ -41,6 +41,7 @@ export async function getItemsWithCategories () {
         subcategoryName: '$subcat.subcategoryName',
         categoryName: '$cat.categoryName',
         images: 1,
+        videos: 1,
       },
     },
   ]);

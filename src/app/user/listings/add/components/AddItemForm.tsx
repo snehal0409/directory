@@ -243,12 +243,24 @@ export default function AddItemForm({ categories, subcategories, userId }: Props
       </div>
 
       {/* Submit Button */}
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
-        Add Listing
-      </button>
+      
+      <div className="flex gap-4">
+  <button
+    type="submit"
+    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+  >
+    Add Listing
+  </button>
+
+  <button
+    type="button"
+    onClick={() => router.back()}
+    className="bg-gray-600 text-white px-4 py-2 rounded"
+  >
+    Cancel
+  </button>
+</div>
+
 
       {error && <p className="text-red-500 mb-4 text-sm text-center">{error}</p>}
 

@@ -6,16 +6,7 @@ import DeleteButton from './components/DeleteButton';
 import { Image as ImageType, Video as VideoType } from '@/models/item';
 import Image from 'next/image';
 import { Header } from '@/app/_components/Header';
-
-interface Item {
-  _id: string;
-  itemTitle: string;
-  categoryName: string;
-  subcategoryName: string;
-  itemDescription: string;
-  images: ImageType[];
-  videos: VideoType[];
-}
+import { getPresignedDownloadUrl } from '@/lib/s3';
 
 export default async function ListingsPage() {
   const user = await session();
@@ -24,7 +15,29 @@ export default async function ListingsPage() {
     redirect('/login');
   }
 
-  const items = await getItemsWithCategories(user.userId);
+    let items = await getItemsWithCategories(user.userId);
+
+ items = await Promise.all(
+    items.map(async (item) => {
+      item.images = await Promise.all(
+        (item.images || []).map(async (img: ImageType) => ({
+          ...img,
+          presignedUrl: await getPresignedDownloadUrl(img.thumb),
+          mainUrl: await getPresignedDownloadUrl(img.url),
+        }))
+      );
+
+      item.videos = await Promise.all(
+        (item.videos || []).map(async (vid: VideoType) => ({
+          ...vid,
+          presignedUrl: await getPresignedDownloadUrl(vid.thumb),
+          mainUrl: await getPresignedDownloadUrl(vid.url),
+        }))
+      );
+
+      return item;
+    })
+  )
 
   return (
     <>
@@ -66,7 +79,7 @@ export default async function ListingsPage() {
                     itemDescription,
                     images,
                     videos,
-                  }: Item) => (
+                  }) => (
                     <tr key={_id} className="hover:bg-gray-50 transition">
                       <td className="px-4 py-3 border font-medium text-gray-900">
                         {itemTitle}
@@ -81,9 +94,9 @@ export default async function ListingsPage() {
                         {itemDescription}
                       </td>
                       <td className="px-4 py-3 border text-center">
-                        {images?.length > 0 && images[0]?.thumb ? (
+                       {images?.length > 0 && images[0]?.presignedUrl ?(
                           <Image
-                            src={`/uploads/thumbnails/${images[0].thumb}`}
+                             src={images[0].presignedUrl}
                             alt="Listing"
                             width={64}
                             height={64}
@@ -94,19 +107,14 @@ export default async function ListingsPage() {
                         )}
                       </td>
                       <td className="px-4 py-3 border text-center">
-                        {videos?.length > 0 && videos[0]?.url ? (
-                          <video
-                            width={100}
-                            height={64}
-                            controls
-                            className="rounded"
-                          >
-                            <source
-                              src={`/uploads/videos/${videos[0].url}`}
-                              type="video/mp4"
-                            />
-                            Your browser does not support the video tag.
-                          </video>
+                        {videos?.length > 0 && videos[0]?.presignedUrl ? (
+                         <Image
+                                             src={videos[0].presignedUrl}
+                                             alt={`Video for ${itemTitle}`}
+                                             width={64}
+                                             height={64}
+                                             className="object-cover rounded"
+                                           />
                         ) : (
                           <span className="text-gray-500">No video</span>
                         )}

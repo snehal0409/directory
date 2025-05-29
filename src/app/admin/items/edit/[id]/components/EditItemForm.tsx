@@ -98,15 +98,22 @@ export const EditItemForm = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateItem({
-      _id: item._id,
-      itemTitle,
-      itemDescription,
-      subCategoryKey,
-      existingImages,
-      newImages: newImageFiles,
-      existingVideos,
-      newVideos: newVideoFiles,
+    const formData = new FormData();
+    formData.append('subCategoryKey', subCategoryKey);
+    formData.append('itemTitle', itemTitle);
+    formData.append('itemDescription', itemDescription);
+    formData.append('existingImages', JSON.stringify(existingImages));
+    formData.append( 'existingVideos', JSON.stringify(existingVideos))
+
+    newImageFiles.forEach((image) => formData.append('images', image));
+    newVideoFiles.forEach((video) => formData.append('videos', video));
+
+    
+  
+
+    await fetch(`http://localhost:3100/items/${item._id}`, {
+      method: 'PUT',
+      body: formData,
     });
     router.push('/admin/items');
   };
@@ -180,186 +187,184 @@ export const EditItemForm = ({
         </div>
 
         <div>
-          <h2 className="block mb-1">Existing Images</h2>
-          <div className="flex flex-wrap gap-2">
-            {existingImages.map((img, index) => (
-              <div key={index} className="relative inline-block">
-                <Image
-                  src={`/uploads/thumbnails/${img.thumb}`}
-                  width={96}
-                  height={96}
-                  className="object-cover cursor-pointer rounded"
-                  alt={`Image ${index + 1}`}
-                  onClick={() => handleThumbnailClick(`/uploads/${img.url}`)}
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveExistingImage(index)}
-                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="newImages" className="block mb-1">Add New Images</label>
-          <input
-            id="newImages"
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleFileChange}
-            className="w-full border p-2 rounded"
-          />
-          <div className="flex gap-2 mt-2 flex-wrap">
-            {newImageFiles.map((file, index) => {
-              const previewUrl = URL.createObjectURL(file);
-              return (
-                <div key={index} className="relative">
-                  <Image
-                    src={previewUrl}
-                    width={96}
-                    height={96}
-                    className="object-cover rounded"
-                    alt={`New image ${index + 1}`}
-                    onClick={() => setPreviewImage(previewUrl)}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveNewImage(index)}
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                  >
-                    ×
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div>
-          <h2 className="block mb-1">Existing Videos</h2>
-          <div className="flex flex-wrap gap-2">
-            {existingVideos.map((video, index) => (
-              <div key={index} className="relative inline-block">
-                
-                <video width={128} height={128} controls className="rounded cursor-pointer"
-                 onClick={() => handleVideoThumbnailClick(`/uploads/${video.url}`)} >
-                <source src={`/uploads/videos/${video.url}`} type="video/mp4" />
-              
-                Your browser does not support the video tag.
-
-              </video>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveExistingVideo(index)}
-                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="newVideos" className="block mb-1">Add New Videos</label>
-          <input
-            id="newVideos"
-            type="file"
-            accept="video/*"
-            multiple
-            onChange={handleVideoFileChange}
-            className="w-full border p-2 rounded"
-          />
-          <div className="flex gap-2 mt-2 flex-wrap">
-            {newVideoFiles.map((file, index) => {
-              const previewUrl = URL.createObjectURL(file);
-              return (
-                <div key={index} className="relative">
-                  
-                  
-                <video width={128} height={128} controls className="rounded cursor-pointer"
-                 onClick={() => setPreviewVideo(previewUrl)}>
-                <source src={previewUrl} type="video/mp4" />
-                </video>
-
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveNewVideo(index)}
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                  >
-                    ×
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-
-
-        <div className="flex justify-between">
-          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-            Save Changes
-          </button>
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="bg-gray-600 text-white px-4 py-2 rounded"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-
-      {previewImage && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded relative max-w-3xl w-full">
-            <button
-              onClick={() => setPreviewImage(null)}
-              className="absolute top-2 right-2 text-black text-xl font-bold"
-            >
-              ×
-            </button>
-            <Image
-              src={previewImage}
-              alt="Preview"
-              width={800}
-              height={600}
-              className="w-full max-h-[80vh] object-contain"
-            />
-
-        
-          </div>
-        </div>
-      )}
-
-{previewVideo&& (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded relative max-w-3xl w-full">
-            <button
-              onClick={() => setPreviewVideo(null)}
-              className="absolute top-2 right-2 text-black text-xl font-bold"
-            >
-              ×
-            </button>
-         
-  
-  <video width={128} height={128} controls className="rounded cursor-pointer"
+                 <h2 className="block mb-1">Existing Images</h2>
+                 <div className="flex flex-wrap gap-2">
+                   {existingImages.map((img, index) => (
+                     <div key={index} className="relative inline-block">
+                       <Image
+                         src={`/uploads/thumbnails/${img.thumb}`}
+                         width={96}
+                         height={96}
+                         className="object-cover cursor-pointer rounded"
+                         alt={`Image ${index + 1}`}
+                         onClick={() => handleThumbnailClick(`/uploads/${img.url}`)}
+                       />
+                       <button
+                         type="button"
+                         onClick={() => handleRemoveExistingImage(index)}
+                         className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                       >
+                         ×
+                       </button>
+                     </div>
+                   ))}
+                 </div>
+               </div>
+       
+               <div>
+                 <label htmlFor="newImages" className="block mb-1">Add New Images</label>
+                 <input
+                   id="newImages"
+                   type="file"
+                   accept="image/*"
+                   multiple
+                   onChange={handleFileChange}
+                   className="w-full border p-2 rounded"
+                 />
+                 <div className="flex gap-2 mt-2 flex-wrap">
+                   {newImageFiles.map((file, index) => {
+                     const previewUrl = URL.createObjectURL(file);
+                     return (
+                       <div key={index} className="relative">
+                         <Image
+                           src={previewUrl}
+                           width={96}
+                           height={96}
+                           className="object-cover rounded"
+                           alt={`New image ${index + 1}`}
+                           onClick={() => setPreviewImage(previewUrl)}
+                         />
+                         <button
+                           type="button"
+                           onClick={() => handleRemoveNewImage(index)}
+                           className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                         >
+                           ×
+                         </button>
+                       </div>
+                     );
+                   })}
+                 </div>
+               </div>
+       
+               <div>
+                 <h2 className="block mb-1">Existing Videos</h2>
+                 <div className="flex flex-wrap gap-2">
+                   {existingVideos.map((video, index) => (
+                     <div key={index} className="relative inline-block">
+                       <video
+                         width={128}
+                         height={128}
+                         controls
+                         className="rounded cursor-pointer"
+                         onClick={() => handleVideoThumbnailClick(`/uploads/videos/${video.url}`)}
+                       >
+                         <source src={`/uploads/videos/${video.url}`} type="video/mp4" />
+                         Your browser does not support the video tag.
+                       </video>
+                       <button
+                         type="button"
+                         onClick={() => handleRemoveExistingVideo(index)}
+                         className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                       >
+                         ×
+                       </button>
+                     </div>
+                   ))}
+                 </div>
+               </div>
+       
+               <div>
+                 <label htmlFor="newVideos" className="block mb-1">Add New Videos</label>
+                 <input
+                   id="newVideos"
+                   type="file"
+                   accept="video/*"
+                   multiple
+                   onChange={handleVideoFileChange}
+                   className="w-full border p-2 rounded"
+                 />
+                 <div className="flex gap-2 mt-2 flex-wrap">
+                   {newVideoFiles.map((file, index) => {
+                     const previewUrl = URL.createObjectURL(file);
+                     return (
+                       <div key={index} className="relative">
+                         <video
+                           width={128}
+                           height={128}
+                           controls
+                           className="rounded cursor-pointer"
+                           onClick={() => setPreviewVideo(previewUrl)}
+                         >
+                           <source src={previewUrl} type="video/mp4" />
+                         </video>
+                         <button
+                           type="button"
+                           onClick={() => handleRemoveNewVideo(index)}
+                           className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                         >
+                           ×
+                         </button>
+                       </div>
+                     );
+                   })}
+                 </div>
+               </div>
+       
+               <div className="flex justify-between">
+                 <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+                   Save Changes
+                 </button>
+                 <button
+                   type="button"
+                   onClick={() => router.back()}
+                   className="bg-gray-600 text-white px-4 py-2 rounded"
                  >
-                <source src={previewVideo} type="video/mp4" />
-                </video>
-
-
-          </div>
-        </div>
-      )}
-
-
-    </>
-  );
-};
+                   Cancel
+                 </button>
+               </div>
+             </form>
+       
+             {previewImage && (
+               <div
+                 className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+               ><a
+                 onClick={() => setPreviewImage(null)}
+                 onKeyUp={() => setPreviewImage(null)}
+                 href="#"
+                 title="Preview"
+               >
+                   <Image
+                     src={previewImage}
+                     alt="Preview"
+                     width={800}
+                     height={800}
+                     className="rounded max-h-[90vh] max-w-[90vw] object-contain"
+                   />
+                 </a>
+               </div>
+             )}
+       
+             {previewVideo && (
+               <div
+                 className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+               >
+                 <a
+                   onClick={() => setPreviewVideo(null)}
+                   onKeyUp={() => setPreviewVideo(null)}
+                   href="#"
+                   title="Preview"
+                 >
+                   <video
+                     src={previewVideo}
+                     controls
+                     autoPlay
+                     className="rounded max-h-[90vh] max-w-[90vw]"
+                   />
+                 </a>
+               </div>
+             )}
+           </>
+         );
+       };
+       

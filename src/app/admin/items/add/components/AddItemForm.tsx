@@ -38,67 +38,59 @@ export default function AddItemForm({ categories, subcategories }: Props) {
     );
   }, [selectedCategory, subcategories]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
+    const files = event.target.files;
     if (files) {
       const newFiles = Array.from(files);
-      setImageFiles(prev => [...prev, ...newFiles]);
-      setImagePreviews(prev => [...prev, ...newFiles.map(f => URL.createObjectURL(f))]);
+      if (type === 'image') {
+        setImageFiles(prevFiles => [...prevFiles, ...newFiles]);
+        const previewUrls = newFiles.map(file => URL.createObjectURL(file));
+        setImagePreviews(prevPreviews => [...prevPreviews, ...previewUrls]);
+      } else if (type === 'video') {
+        setVideoFiles(prevFiles => [...prevFiles, ...newFiles]);
+        const previewUrls = newFiles.map(file => URL.createObjectURL(file));
+        setVideoPreviews(prevPreviews => [...prevPreviews, ...previewUrls]);
+      }
     }
   };
 
-
-  const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const newFiles = Array.from(files);
-      setVideoFiles(prev => [...prev, ...newFiles]);
-      setVideoPreviews(prev => [...prev, ...newFiles.map(f => URL.createObjectURL(f))]);
+  const handleRemoveFile = (index: number, type: 'image' | 'video') => {
+    if (type === 'image') {
+      setImageFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+      setImagePreviews(prevPreviews => prevPreviews.filter((_, i) => i !== index));
+    } else if (type === 'video') {
+      setVideoFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+      setVideoPreviews(prevPreviews => prevPreviews.filter((_, i) => i !== index));
     }
   };
 
-  const handleRemoveImage = (index: number) => {
-    setImageFiles(prev => prev.filter((_, i) => i !== index));
-    setImagePreviews(prev => prev.filter((_, i) => i !== index));
-  };
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
 
-  const handleRemoveVideo = (index: number) => {
-    setVideoFiles(prev => prev.filter((_, i) => i !== index));
-    setVideoPreviews(prev => prev.filter((_, i) => i !== index));
-  };
+    const formDataFromEvent = new FormData(event.target as HTMLFormElement);
+    const subcategoryKey = formDataFromEvent.get('subcategoryKey') as string;
+    const itemTitle = formDataFromEvent.get('itemTitle') as string;
+    const itemDescription = formDataFromEvent.get('itemDescription') as string;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    if (!subcategoryKey || !itemTitle || !itemDescription || imageFiles.length === 0 || videoFiles.length === 0) {
+      setError('All fields and at least one image and one video are required');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('subcategoryKey', subcategoryKey);
   
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
-  
-    // Append images and videos manually
-    imageFiles.forEach((file) => {
-      formData.append(`images`, file);
+    formData.append('itemTitle', itemTitle);
+    formData.append('itemDescription', itemDescription);
+    imageFiles.forEach((image) => formData.append(`images`, image));
+    videoFiles.forEach((video) => formData.append(`videos`, video));
+
+    await fetch('http://localhost:3100/items', {
+      method: 'POST',
+      body: formData,
     });
-  
-    videoFiles.forEach((file, ) => {
-      formData.append(`videos`, file);
-    });
-
-    formData.append('subcategoryKey', formData.get('subcategoryKey') as string);
-    formData.append('itemTitle', formData.get('itemTitle') as string); 
-    formData.append('itemDescription', formData.get('itemDescription') as string);
-
-    await addItem(formData)
-      .then(() => {
-        setError(''); // Clear error on success
-        router.push('/admin/items');
-      })
-      .catch(err => {
-        setError('Failed to add item. Please try again.');
-        console.error(err);
-      });    
-    // router.push('/admin/items'); // Redirect to items page after successful submission
+    router.push("/admin/items");
   };
-  
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
       <div>
@@ -167,7 +159,7 @@ export default function AddItemForm({ categories, subcategories }: Props) {
           type="file"
           accept="image/*"
           multiple
-          onChange={handleFileChange}
+          onChange={e => handleFileChange(e, 'image')}
           className="w-full border p-2 rounded"
           title="Choose images to upload"
         />
@@ -184,7 +176,7 @@ export default function AddItemForm({ categories, subcategories }: Props) {
               />
               <button
                 type="button"
-                onClick={() => handleRemoveImage(index)}
+                          onClick={() => handleRemoveFile(index, 'image')}
                 className="absolute top-0 right-0 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center"
                 aria-label={`Remove image ${index + 1}`}
               >
@@ -202,7 +194,7 @@ export default function AddItemForm({ categories, subcategories }: Props) {
           type="file"
           accept="video/*"
           multiple
-          onChange={handleVideoChange}
+                 onChange={e => handleFileChange(e, 'video')}
           className="w-full border p-2 rounded"
           title="Choose videos to upload"
         />
@@ -215,7 +207,7 @@ export default function AddItemForm({ categories, subcategories }: Props) {
               </video>
               <button
                 type="button"
-                onClick={() => handleRemoveVideo(index)}
+                        onClick={() => handleRemoveFile(index, 'video')}
                 className="absolute top-0 right-0 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center"
                 aria-label={`Remove video ${index + 1}`}
               >

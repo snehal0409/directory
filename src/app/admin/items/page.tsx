@@ -5,13 +5,36 @@ import { getSessionAdmin } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import AdminNav from '../dashboard/components/AdminNav';
 import LogoutButton from '../dashboard/components/logout';
-
+import { getPresignedDownloadUrl } from '@/lib/s3';
 
 export default async function ItemsPage() {
-  const user = await getSessionAdmin();
+  const user = await getSessionAdmin(); 
   if (!user) redirect('/admin/login');
 
-  const items = await getItemsWithCategories();
+  let items = await getItemsWithCategories();
+  items = await Promise.all(
+    items.map(async (item) => {
+      item.images = await Promise.all(
+        (item.images || []).map(async (img: { thumb: string; url: string }) => ({
+          ...img,
+          presignedUrl: await getPresignedDownloadUrl(img.thumb),
+          mainUrl: await getPresignedDownloadUrl(img.url),
+        }))
+      );
+
+      item.videos = await Promise.all(
+        (item.videos || []).map(async (video: { thumb: string; url: string }) => ({
+          ...video,
+          presignedUrl: await getPresignedDownloadUrl(video.thumb),
+          mainUrl: await getPresignedDownloadUrl(video.url),
+        }))
+      );
+
+      return item;
+    })
+  );
+
+  console.log(items)
 
   return (
     <><div className="p-4">
@@ -37,6 +60,7 @@ export default async function ItemsPage() {
             <th className="p-2 border border-black-300">Category</th>
             <th className="p-2 border border-black-300">Subcategory</th>
             <th className="p-2 border border-black-300">Images</th>
+            <th className="p-2 border border-black-300">Video</th>
             <th className="p-2 border border-black-300">Actions</th>
           </tr>
         </thead>
@@ -50,7 +74,7 @@ export default async function ItemsPage() {
               <td className="p-2 border border-black-300">
                 {item.images && item.images.length > 0 ? (
                   <Image
-                    src={`/uploads/thumbnails/${item.images[0].thumb}`}
+                    src={item.images[0].presignedUrl}
                     alt={item.itemTitle}
                     width={64}
                     height={64}
@@ -59,6 +83,20 @@ export default async function ItemsPage() {
                   "No Image"
                 )}
               </td>
+              <td className="p-2 border border-black-300">
+                {item.videos && item.videos.length > 0 ? (
+                  <Image
+                    src={item.videos[0].presignedUrl}
+                    alt={`Video for ${item.itemTitle}`}
+                    width={64}
+                    height={64}
+                    className="object-cover rounded"
+                  />
+                ) : (
+                  "No Video"
+                )}
+              </td>
+
               <td className="p-2 border border-black-500 ">
                 <Link href={`/admin/items/edit/${item._id}`} className="text-blue-600 hover:underline">
                   Edit
