@@ -69,17 +69,20 @@ export default function LightboxGallery({ item }: Props) {
         {/* Thumbnails */}
         <div className="flex gap-4 overflow-x-auto">
           {item.images.slice(1).map((img, index) => (
-            <div
-              key={index}
-              className="relative w-32 h-20 flex-shrink-0 rounded-md overflow-hidden border border-gray-300 dark:border-zinc-700 cursor-pointer"
-              onClick={() => {
-                const mainUrl = getMainUrl(img);
-                if ( mainUrl) {
-                  setLightboxMedia({
-                   mainUrl,
-                    type: 'image',
-                  });
-                }
+           <div
+  key={index}
+  role="button"
+  tabIndex={0}
+  aria-label={`View image ${index + 2}`}
+  className="relative w-32 h-20 flex-shrink-0 rounded-md overflow-hidden border border-gray-300 dark:border-zinc-700 cursor-pointer"
+  onClick={() => {
+    const mainUrl = getMainUrl(img);
+    if (mainUrl) {
+      setLightboxMedia({
+        mainUrl,
+        type: 'image',
+      });
+    }
               }}
               onKeyUp={(e) => {
                 if (e.key === 'Enter') {
@@ -106,38 +109,41 @@ export default function LightboxGallery({ item }: Props) {
 
 {item.videos.map((video, index) => (
             <div
-              key={index}
-              className="relative w-32 h-20 flex-shrink-0 rounded-md overflow-hidden border border-gray-300 dark:border-zinc-700 cursor-pointer"
-              onClick={() => {
-                const mainUrl = getMainUrl(video);
-                if ( mainUrl) {
-                  setLightboxMedia({
-                   mainUrl,
-                    type: 'video',
-                  });
-                }
-              }}
-              onKeyUp={(e) => {
-                if (e.key === 'Enter') {
-                  const  mainUrl = getMainUrl(video);
-                  if ( mainUrl) {
-                    setLightboxMedia({
-                     mainUrl,
-                      type: 'video',
-                    });
-                  }
-                }
-              }}
+  key={index}
+  role="button"
+  tabIndex={0}
+  aria-label={`Open video ${index + 2}`}
+  className="relative w-32 h-20 flex-shrink-0 rounded-md overflow-hidden border border-gray-300 dark:border-zinc-700 cursor-pointer"
+  onClick={() => {
+    const mainUrl = getMainUrl(video);
+    if (mainUrl) {
+      setLightboxMedia({
+        mainUrl,
+        type: 'video',
+      });
+    }
+  }}
+  onKeyDown={(e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      const mainUrl = getMainUrl(video);
+      if (mainUrl) {
+        setLightboxMedia({
+          mainUrl,
+          type: 'video',
+        });
+      }
+    }
+  }}
+>
+  <Image
+    src={video.presignedUrl}
+    alt={`Video ${index + 2}`}
+    fill
+    style={{ objectFit: 'cover' }}
+  />
+</div>
 
-        
-            >
-              <Image
-                src={video.presignedUrl}
-                alt={`Video ${index + 2}`}
-                fill
-                style={{ objectFit: 'cover' }}
-              />
-            </div>
           ))}
 
 

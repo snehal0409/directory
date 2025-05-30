@@ -4,7 +4,6 @@ import { session } from '@/app/actions/auth';
 import { getItemsWithCategories } from './actions';
 import DeleteButton from './components/DeleteButton';
 import { Image as ImageType, Video as VideoType } from '@/models/item';
-import Image from 'next/image';
 import { Header } from '@/app/_components/Header';
 import { getPresignedDownloadUrl } from '@/lib/s3';
 import {Lightbox} from './components/Lightbox'

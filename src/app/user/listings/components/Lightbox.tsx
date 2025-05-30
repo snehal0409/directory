@@ -35,38 +35,41 @@ export function Lightbox({ media,type  }: Props) {
       <div>       
 
   
-            <div
-              className="relative w-32 h-20 flex-shrink-0 rounded-md overflow-hidden border border-gray-300 dark:border-zinc-700 cursor-pointer"
-              onClick={() => {
-                const mainUrl = getMainUrl(media);
-                if ( mainUrl) {
-                  setLightboxMedia({
-                   mainUrl,
-                    type,
-                  });
-                }
-              }}
-              onKeyUp={(e) => {
-                if (e.key === 'Enter') {
-                  const  mainUrl = getMainUrl(media);
-                  if ( mainUrl) {
-                    setLightboxMedia({
-                     mainUrl,
-                      type,
-                    });
-                  }
-                }
-              }}
+           <div
+  role="button"
+  tabIndex={0}
+  aria-label="Open media"
+  className="relative w-32 h-20 flex-shrink-0 rounded-md overflow-hidden border border-gray-300 dark:border-zinc-700 cursor-pointer"
+  onClick={() => {
+    const mainUrl = getMainUrl(media);
+    if (mainUrl) {
+      setLightboxMedia({
+        mainUrl,
+        type,
+      });
+    }
+  }}
+  onKeyDown={(e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault(); // prevent scrolling on Space key
+      const mainUrl = getMainUrl(media);
+      if (mainUrl) {
+        setLightboxMedia({
+          mainUrl,
+          type,
+        });
+      }
+    }
+  }}
+>
+  <Image
+    src={media.presignedUrl}
+    alt={`Image`}
+    fill
+    style={{ objectFit: 'cover' }}
+  />
+</div>
 
-        
-            >
-              <Image
-                src={media.presignedUrl}
-                alt={`Image`}
-                fill
-                style={{ objectFit: 'cover' }}
-              />
-            </div>
 
 
 

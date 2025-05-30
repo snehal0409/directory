@@ -3,13 +3,8 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { updateItem } from '../actions';
 import { Lightbox, MediaItem } from '../../../components/Lightbox';
 
-type VideoType = {
-  url: string;
-  thumb: string;
-};
 
 export type ImageType = { 
   url: string;
@@ -118,13 +113,7 @@ export const EditItemForm = ({
     router.push('/user/listings');
   };
 
-  const handleThumbnailClick = (url: string) => {
-    setPreviewImage(url);
-  };
-
-  const handleVideoThumbnailClick = (url: string) => {
-    setPreviewVideo(url);
-  };
+  
 
   return (
     <>

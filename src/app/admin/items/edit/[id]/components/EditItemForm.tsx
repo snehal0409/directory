@@ -304,24 +304,34 @@ export const EditItemForm = ({
         </div>
       </form>
 
-      {/* Image Preview Modal */}
       {previewImage && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-          <div onClick={() => setPreviewImage(null)} className="cursor-pointer">
-            <Image src={previewImage} alt="Preview" width={600} height={400} />
-          </div>
-        </div>
-      )}
+  <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+    <button
+      onClick={() => setPreviewImage(null)}
+      className="cursor-pointer focus:outline-none"
+      aria-label="Close image preview"
+      type="button"
+    >
+      <Image src={previewImage} alt="Preview" width={600} height={400} />
+    </button>
+  </div>
+)}
 
       {/* Video Preview Modal */}
       {previewVideo && (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-          <div onClick={() => setPreviewVideo(null)} className="cursor-pointer">
-            <video controls autoPlay width={600} height={400}>
-              <source src={previewVideo} type="video/mp4" />
-            </video>
-          </div>
-        </div>
+  <button
+    onClick={() => setPreviewVideo(null)}
+    className="cursor-pointer focus:outline-none"
+    aria-label="Close video preview"
+    type="button"
+  >
+    <video controls autoPlay width={600} height={400}>
+      <source src={previewVideo} type="video/mp4" />
+    </video>
+  </button>
+</div>
+
       )}
     </>
   );
