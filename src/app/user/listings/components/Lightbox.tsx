@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
-type MediaItem = {
+export type MediaItem = {
   presignedUrl: string; 
   mainUrl: string;    
   thumb: string;

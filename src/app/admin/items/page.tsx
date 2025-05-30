@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { deleteItem, getItemsWithCategories } from './actions';
-import Image from 'next/image';
+
 import { getSessionAdmin } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import AdminNav from '../dashboard/components/AdminNav';

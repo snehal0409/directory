@@ -4,16 +4,18 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { updateItem } from '../actions';
+import { Lightbox, MediaItem } from '../../../components/Lightbox';
 
 type VideoType = {
   url: string;
   thumb: string;
 };
 
-export type ImageType = {
+export type ImageType = { 
   url: string;
   thumb: string;
 };
+
 
 type Subcategory = {
   subcategoryKey: string;
@@ -28,8 +30,8 @@ type EditItemFormProps = {
     itemDescription: string;
     subCategoryKey: string;
     categoryKey: string;
-    images: ImageType[];
-    videos: VideoType[];
+     images: MediaItem[];
+      videos: MediaItem[];
   };
   categories: { categoryKey: string; categoryName: string }[];
   subcategories: Subcategory[];
@@ -47,10 +49,10 @@ export const EditItemForm = ({
   const [subCategoryKey, setSubCategoryKey] = useState(item.subCategoryKey);
   const [selectedCategory, setSelectedCategory] = useState(item.categoryKey);
 
-  const [existingImages, setExistingImages] = useState<ImageType[]>(item.images ?? []);
+  const [existingImages, setExistingImages] = useState<MediaItem[]>(item.images ?? []);
   const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
 
-  const [existingVideos, setExistingVideos] = useState<VideoType[]>(item.videos ?? []);
+  const [existingVideos, setExistingVideos] = useState<MediaItem[]>(item.videos ?? []);
   const [newVideoFiles, setNewVideoFiles] = useState<File[]>([]);
 
   const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategory[]>([]);
@@ -183,24 +185,17 @@ export const EditItemForm = ({
         <div>
           <h2 className="block mb-1">Existing Images</h2>
           <div className="flex flex-wrap gap-2">
-            {existingImages.map((img, index) => (
-              <div key={index} className="relative inline-block">
-                <Image
-                  src={`/uploads/thumbnails/${img.thumb}`}
-                  width={96}
-                  height={96}
-                  className="object-cover cursor-pointer rounded"
-                  alt={`Image ${index + 1}`}
-                  onClick={() => handleThumbnailClick(`/uploads/${img.url}`)}
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveExistingImage(index)}
-                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                >
-                  ×
-                </button>
-              </div>
+                      {existingImages.map((img, index) => (
+                        <div key={index} className="relative inline-block">
+                          <Lightbox media={img} type="image" />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveExistingImage(index)}
+                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                          >
+                            ×
+                          </button>
+                        </div>
             ))}
           </div>
         </div>
@@ -241,21 +236,13 @@ export const EditItemForm = ({
           </div>
         </div>
 
+        {/* Existing Videos */}
         <div>
           <h2 className="block mb-1">Existing Videos</h2>
           <div className="flex flex-wrap gap-2">
-            {existingVideos.map((video, index) => (
+            {existingVideos.map((vid, index) => (
               <div key={index} className="relative inline-block">
-                <video
-                  width={128}
-                  height={128}
-                  controls
-                  className="rounded cursor-pointer"
-                  onClick={() => handleVideoThumbnailClick(`/uploads/videos/${video.url}`)}
-                >
-                  <source src={`/uploads/videos/${video.url}`} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
+                <Lightbox media={vid} type="video" />
                 <button
                   type="button"
                   onClick={() => handleRemoveExistingVideo(index)}
